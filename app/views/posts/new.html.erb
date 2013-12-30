@@ -1,0 +1,5 @@
+<% content_for :subtitle do %><h2>New post</h2><% end %>
+<section id="new-post">
+<%= render 'form' %>
+<nav><%= link_to 'Back', posts_path, { :class => 'button' } %></nav>
+</section>

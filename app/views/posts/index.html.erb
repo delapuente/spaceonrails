@@ -1,0 +1,15 @@
+<% content_for :subtitle do %><h2>Listing posts</h2><% end %>
+
+<section id="post-list">
+  <p><%= link_to 'New post', new_post_path, { :class => 'button' } %></p>
+  <ol>
+  <% @posts.each do |post| %>
+    <li><span class="title"><%= link_to post.title, post %></span>
+      <menu><%= link_to '✎', edit_post_path(post), { :class => 'icon' } %>
+      <%= link_to '❌', post, class: 'icon' , method: :delete,
+                             data: { confirm: 'Are you sure?' } %></menu>
+    </li>
+  <% end %>
+  </ol>
+  <%= will_paginate @posts %>
+</section>

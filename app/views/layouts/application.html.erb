@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Blog</title>
+  <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
+  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+  <section id="presentation">
+    <h1><%= link_to 'My Space Blog', root_path %></h1>
+    <%= yield :subtitle %>
+    <p><img src="/assets/rails.png" alt="Rails logo" /> This is a demo blog
+    application powered by <strong>Ruby on Rails</strong>. All the
+    presentation is provided by the <strong>server side</strong> making use
+    of <tt>*.erb</tt> files for templating.</p>
+    <p><img src="/assets/html5.png" alt="Rails logo" /> Our goal is to
+    transform the blog into a <strong>rich internet application</strong> by
+    using the HTML5 stack of technologies: HTML5, CSS3 and JavaScript 1.8.
+    </p>
+  </section>
+  <section id="content">
+    <div class="spining-bg"></div>
+    <%= yield %>
+  </section>
+</body>
+</html>
