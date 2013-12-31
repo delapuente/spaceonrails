@@ -4,9 +4,13 @@
   <%= @post.text.html_safe %>
   <nav><%= link_to 'Back', posts_path, { :class => 'button' } %></nav>
 
-  <h3>Add a comment:</h3>
+  <% content_for :aside do %>
+    <% @post.comments.each do |comment| %>
+      <section class="comment">
+        <%= render comment %>
+     </section>
+    <% end %>
+  <% end %>
+  
   <%= render "comments/form" %>
-
-  <h3>Comments</h3>
-  <%= render @post.comments %>
 </section>

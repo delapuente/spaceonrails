@@ -1,7 +1,7 @@
 <% content_for :subtitle do %><h2>Listing posts</h2><% end %>
 
 <section id="post-list">
-  <p><%= link_to 'New post', new_post_path, { :class => 'button' } %></p>
+  <%= link_to 'New post', new_post_path, { :class => 'button' } %>
   <ol>
   <% @posts.each do |post| %>
     <li><span class="title"><%= link_to post.title, post %></span>

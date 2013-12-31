@@ -1,15 +1,12 @@
 <p>
-  <strong>Commenter:</strong>
-  <%= comment.commenter %>
+  <%= comment.commenter %> says:
 </p>
 
 <p>
-  <strong>Comment:</strong>
   <%= comment.body %>
 </p>
 
-<p>
-  <%= link_to 'Destroy Comment', [comment.post, comment],
-               method: :delete,
-               data: { confirm: 'Are you sure?' } %>
-</p>
+<menu><%= link_to '❌', [comment.post, comment],
+                       method: :delete, class: 'icon',
+                       data: { confirm: 'Are you sure?' } %>
+</menu>
