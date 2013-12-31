@@ -1,11 +1,10 @@
 <section id="add-comment">
 <%= form_for([@post, @post.comments.build]) do |f| %>
   <p>
-    <%= f.text_area :body %>
+    <%= f.text_area :body, placeholder: 'Leave a comment' %>
   </p>
-  <p>
-    <%= f.label :commenter %><br />
-    <%= f.text_field :commenter %>
+  <p class="commenter">
+    <%= f.label :commenter, 'by' %>&nbsp;&nbsp;<%= f.text_field :commenter %>
   </p>
   <p>
     <%= f.submit %>

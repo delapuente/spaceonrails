@@ -32,7 +32,11 @@ group :doc do
   gem 'sdoc', require: false
 end
 
+# Easy plugin for pagination
 gem 'will_paginate', '~> 3.0.5'
+
+# easy plugin for attachments
+gem 'paperclip', '~> 3.0'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.1.2'

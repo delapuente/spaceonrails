@@ -7,24 +7,27 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-  <div class="spining-bg"></div>
   <aside>
     <%= yield :aside %>
   </aside>
-  <section id="content">
-    <h1><%= link_to 'Space on Rails!', root_path %></h1>
-    <%= yield :subtitle %>
-    <%= yield %>
-    <footer>
-      <p><img src="/assets/rails.png" alt="Rails logo" /> This is a demo blog
-      application powered by <strong>Ruby on Rails</strong>. All the
-      presentation is provided by the <strong>server side</strong> making use
-      of <tt>*.erb</tt> files for templating.</p>
-      <p>Our goal is to
-      transform the blog into a <strong>rich internet application</strong> by
-      using the HTML5 stack of technologies: HTML5, CSS3 and JavaScript 1.8.
-      </p>
-    </footer>
-  </section>
+  <div id="wrapper">
+    <header>
+      <h1><%= link_to 'Space on Rails!', root_path %></h1>
+      <%= yield :subtitle %>
+    </header>
+    <div>
+      <%= yield %>
+    </div>
+  </div>
+  <footer>
+    <p><img src="/assets/rails.png" alt="Rails logo" /> This is a demo blog
+    application powered by <strong>Ruby on Rails</strong>. All the
+    presentation is provided by the <strong>server side</strong> making use
+    of <tt>*.erb</tt> files for templating.</p>
+    <p>Our goal is to
+    transform the blog into a <strong>rich internet application</strong> by
+    using the HTML5 stack of technologies: HTML5, CSS3 and JavaScript 1.8.
+    </p>
+  </footer>
 </body>
 </html>
