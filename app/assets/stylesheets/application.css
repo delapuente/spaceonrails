@@ -4,16 +4,19 @@
 /*
  * THE LAYOUT
  * ==========
+ * The big picture is presented here. The blog is split into two sections: 
+ * a main big left side and a thin sidebar on the right.
  */
+
+/* 100% height for body and html tags means the height of the viewport. */
 html, body { height: 100%; } 
 
 /* The main wrapper fill almost all the background leaving some space on the
 right for the aside column. */
 #wrapper {
-  width: calc(100% - 20rem);
-}
 
-#wrapper {
+  /* Making the wrapper mininum heigh to be 100% forces the wrapper to fill
+  all the viewport space pushing the footer to the bottom. */
   min-height: 100%;
   position: relative;
 
@@ -23,6 +26,9 @@ right for the aside column. */
 }
 
 #wrapper > header h1 {
+  /* rem is a very handful CSS3 unit named after root em, i.e. relative to the
+  font-size of the html (the root) element. This way all is relative to a user
+  defined size. See TEXT & COLOR section. */
   padding: 1rem;
 }
 
@@ -37,6 +43,9 @@ right for the aside column. */
 /* The aside column fills the right space. */
 body > aside {
   float: right;
+  
+  /* With this box model, setting the width to 20rem includes all the space
+  to the border itself. */
   box-sizing: border-box;
   width: 20rem;
   padding: 1rem;
@@ -45,20 +54,18 @@ body > aside {
 /* The footer. */
 footer {
   padding: 1rem;
-  width: calc(100% - 20rem - 2rem); /* taking into account aside column and
+  width: calc(100% - 20rem - 2rem); /* Taking into account aside column and
                                        padding. */
 }
 
 /*
  * SECTIONS
  * ========
- *
- * Remember boxes from layout section. Nox focus on each box and setup its
- * content. Create a sublayout for each of them.
+ * Now focus on each former section and setup its content. Create as many 
+ * sub-layouts as needed.
  */
 
 #post-list li {
-  display: inline-block;
   width: calc(100% - 1rem);
   padding: 0.2rem 0.5rem;
   margin-bottom: 0.5rem;
@@ -80,16 +87,31 @@ footer {
 
 #show-post .post-picture {
   float: right;
-  margin: 0.5rem 1.5rem;
-  transform: rotate(2deg);
+  width: 50%; /* Making this relative to the content container provides a
+              very responsive choice for images. */
+
+  padding: 1rem;
+  margin-left: -3rem; /* A negative margin forces the content to invade the box
+                      of the element. It is here to compensate the X-translation
+                      used to make the picture to overflow the content section.
+                      */
+  padding-bottom: 3rem;
+
+  /* Box shadows are verbose properties which allow to specify a list of
+  shadows. Parameters are: offset-x offset-y blur spread and color. They can
+  be prefixed by inset to create an inner shadow. */
+  box-shadow: 0.5rem 0.5rem 0.5rem 0 rgba(0, 0, 0, 0.4);
+
+  /* Transformations are one of the most interesting CSS3 new features. 
+  Transformations happen after calculating the structure of the page and have
+  a very high performance. Transformations can be combined writing them as
+  a space-separated list.*/
+  transform: rotate(2deg) translateX(5rem);
 }
 
 #show-post .post-picture img {
-  max-height: 30rem;
-  padding: 1rem;
-  padding-bottom: 3rem;
-  background-color: white;
-  box-shadow: 0.5rem 0.5rem 0.5rem 0 rgba(0, 0, 0, 0.4);
+  width: 100%; /* Only specifying one of the dimensions makes the other auto
+               and keeps the aspect ration. */
 }
 
 #add-comment {
@@ -97,11 +119,14 @@ footer {
   padding: 1rem;
   border: 4px solid;
   position: relative;
+  
+  /* Border radius allow to make rounded corner for boxes. */
   border-radius: 1rem;
   box-shadow: 0 1rem 1.5rem 0.2rem rgba(0, 0, 0, 0.4);
 }
 
 #add-comment p.commenter,
+/* The brother (~) selector matches the next element at the same DOM level. */
 #add-comment p.commenter ~ p {
   text-align: right;
 }
@@ -111,7 +136,7 @@ footer {
   box-shadow: inset 0 -1px 1px 0;
 }
 
-#add-comment input[type="text"] {
+#add-comment input[type=text] {
   width: 50%;
 }
 
@@ -124,6 +149,8 @@ form p {
 }
 
 form textarea,
+/* The fancy attribute selector allows to test for attributes in several way.
+This one is testing for the existence of attribute type set to value "text". */
 form input[type="text"] {
   box-sizing: border-box;
   width: 100%;
@@ -140,13 +167,18 @@ form input[type="text"] {
 
 aside .comment {
   position: relative;
-  z-index: 20;
+  z-index: 20; /* The z-index only works for non static position values. */
   padding: 1rem;
   margin-bottom: 1rem;
   border-radius: 1rem;
 }
 
+/* The pseudoelement :focus is triggered when an element obtains the focus.
+Very limited HTML elements can be focused at first but you can force any element
+to become focusable by setting its tabindex attribute to a numeric value. */
 aside .comment:focus {
+  /* Outline is a special class of border. Normally used by browsers to
+  highlight an element in a special state such as active or focused.*/
   outline: none;
 }
 
@@ -169,6 +201,7 @@ footer > p ~ p {
 
 footer p img {
   height: 10rem;
+  max-height: 20%;
   float: left;
   margin-right: 1rem;
 }
@@ -241,9 +274,15 @@ aside .comment {
   margin-bottom: 1rem;
   border-radius: 1rem;
 
+  /* The transform-origin property allows to set the center of a transformation.
+  As we want the comments hang from the top-right corner, we set the center in
+  that position. */
   transform-origin: 100% 0%;
   transform: rotate(-5deg);
   transition: transform 400ms ease;
+  
+  /* Making the cursor became a pointer when hover we are calling for an action
+  on these elements.*/
   cursor: pointer;
 }
 
@@ -254,19 +293,23 @@ click events without relying on JavaScript. */
 aside .comment:focus {
   transform: scale(1.5) rotate(0);
   outline: none;
-  z-index: 21;
+  z-index: 21; /* As the natural z ordering puts later lower elements in the
+                HTML above the higher ones, raise the z-index to avoid the 
+                focused comment to be clipped by the lower ones. */
 }
 
 /*
- * TYPOGRAPHY & COLORS
- * ===================
+ * TEXT & COLOR
+ * ============
+ * I like to leave this section at the end concerning the customizable colors
+ * for the different elements in order to make them easily changed.
  */
 
 html {
   font-family: 'Source Sans Pro', sans-serif;
 
   background: url(bg.jpg) fixed;
-  background-size: 100%, 100%; /* Makes the bg to fill the available space. */
+  background-size: cover; /* Makes the bg to fill the available space. */
 }
 
 #wrapper {
@@ -312,6 +355,10 @@ html {
 
 #show-post {
   text-align: justify;
+}
+
+#show-post .post-picture {
+  background-color: white;
 }
 
 #add-comment {
@@ -409,7 +456,40 @@ footer {
 /*
  * RESPONSIVENESS
  * ==============
+ * Here there are some rewrites to ensure the responsiveness of the design.
+ * As we worked in rem units, all the hard work is almost done. Anyway, some
+ * layout tweaks are still required in order to ensure the proper display of
+ * all elements.
  */
-@media (min-width: 1000px) {
-  html { font-size: 150%; }
+
+/* To avoid the reader become blind due to high resolutions and small fonts. */
+@media (min-width: 1200px) {
+  html { font-size: 150%; } /* This is equivalent to perform a 150% zoom. */
+}
+
+@media (min-width: 1000px) and (max-width: 1200px) {
+  html { font-size: 125%; } /* This is equivalent to perform a 125% zoom. */
+}
+
+/* When falling below 800px, we perform accumulative dramatic changes in the
+layout by shrinking the aside space. */
+@media (max-width: 800px) {
+  html { font-size: 90%; }
+  #wrapper { width: calc(100% - 10rem); }
+  footer { width: calc(100% - 10rem - 2rem); }
+  body > aside { width: 10rem; }
+  #show-post .post-picture {
+    float: none;
+    margin: 0 auto 2rem auto;
+    transform: none;
+  }
+}
+
+/* Once falling below 600px, we rip of comments in order to focus on content. */
+@media (max-width: 600px) {
+  html { font-size: 60%; }
+  #wrapper { width: 100%; }
+  footer { width: calc(100% - 2rem); }
+  body > aside { display: none; }
+  #add-comment { display: none; }
 }
