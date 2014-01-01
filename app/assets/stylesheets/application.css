@@ -87,8 +87,9 @@ footer {
 
 #show-post .post-picture {
   float: right;
-  width: 50%; /* Making this relative to the content container provides a
-              very responsive choice for images. */
+  min-width: 10%;
+  max-width: 50%; /* Making this relative to the content container provides a
+                  very responsive choice for images. */
 
   padding: 1rem;
   margin-left: -3rem; /* A negative margin forces the content to invade the box
@@ -115,6 +116,7 @@ footer {
 }
 
 #add-comment {
+  clear: both;
   margin-top: 4rem;
   padding: 1rem;
   border: 4px solid;

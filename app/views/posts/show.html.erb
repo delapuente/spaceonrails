@@ -2,13 +2,15 @@
 <section id="show-post">
   <nav><%= link_to 'Back', posts_path, { :class => 'button' } %></nav>
   <menu><%= link_to '✎', edit_post_path(@post), { :class => 'icon' } %></menu>
-  <figure class="post-picture">
-    <%= image_tag @post.post_picture.url %>
-  </figure>
+  <% unless @post.post_picture.url == '' %>
+    <figure class="post-picture">
+      <%= image_tag @post.post_picture.url %>
+    </figure>
+  <% end %>
   <%= @post.text.html_safe %>
 
   <% content_for :aside do %>
-    <% @post.comments.each do |comment| %>
+    <% @post.comments.reverse_each do |comment| %>
       <section class="comment" tabindex="0">
         <%= render comment %>
       </section>

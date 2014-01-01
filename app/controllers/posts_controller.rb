@@ -5,10 +5,20 @@ class PostsController < ApplicationController
 
   def create
     @post = Post.new(post_params)
-    if @post.save
-      redirect_to @post
-    else
-      render 'new'
+    respond_to do |format|
+      if @post.save
+        format.html { redirect_to @post }
+        format.json {
+          render :json => { :status => :created },
+                 :status => :created, :location => @post
+        }
+      else
+        format.html { render 'new' }
+        format.json {
+          render :json => { :errors => @post.errors },
+                 :status => :bad_request, :location => @post
+        }
+      end 
     end
   end
   
@@ -25,7 +35,7 @@ class PostsController < ApplicationController
     
     respond_to do |format|
       format.html
-      format.json { render json: @posts }
+      format.json { render json: @posts, methods: [:post_picture] }
     end
   end
   
@@ -35,17 +45,33 @@ class PostsController < ApplicationController
   
   def update
     @post = Post.find(params[:id])
-    if @post.update(post_params)
-      redirect_to @post
-    else
-      render 'edit'
+    respond_to do |format|
+      if @post.update(post_params)
+        format.html { redirect_to @post }
+        format.json {
+          render :json => { :status => :updated },
+                 :status => :ok, :location => @post
+        }
+      else
+        format.html { render 'edit' }
+        format.json {
+          render :json => { :errors => @post.errors },
+                 :status => :bad_request, :location => @post
+        }
+      end 
     end
   end
   
   def destroy
     @post = Post.find(params[:id])
     @post.destroy
-    redirect_to posts_path
+    respond_to do |format|
+      format.html { redirect_to posts_path }
+      format.json {
+        render :json => { :status => :deleted },
+               :status => :ok, :location => @post
+      }
+    end
   end
   
   private

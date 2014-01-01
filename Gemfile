@@ -36,7 +36,7 @@ end
 gem 'will_paginate', '~> 3.0.5'
 
 # easy plugin for attachments
-gem 'paperclip', '~> 3.0'
+gem 'paperclip', '~> 3.5'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.1.2'
