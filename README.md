@@ -20,6 +20,13 @@ Install Ruby dependencies (you'll need [bundler](http://bundler.io/)):
 $ bundle install
 ```
 
+Populate the database:
+
+```bash
+$ rake db:migrate
+$ rake db:seed
+```
+
 Start the server:
 
 ```bash
