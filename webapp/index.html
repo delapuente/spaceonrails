@@ -1,59 +1,96 @@
+<!-- With HTML5, the simple html doctype always refer to the latest version
+of the HTML standard. -->
 <!DOCTYPE html>
 <html>
 <head>
   <title>Space on Rails!</title>
+
+  <!-- The <meta> element indicates in which encoding is the file codified. -->
   <meta charset="utf-8" />
+
+  <!-- The prefixfree JS library prevent us to use vendor specific prefixes for
+  CSS. -->
   <script src="js/prefixfree.min.js" type="text/javascript"></script>
+
+  <!-- The defer attribute tells the browser to wait for DOM completion before
+  executing the script. It was formerly achieved by including the script at the
+  end of the document. -->
   <script defer src="js/application.js" type="text/javascript"></script>
+
+  <!-- Here are the stylesheets for our web application. -->
   <link rel="stylesheet" href="styles/application.css">
   <link rel="stylesheet" href="styles/fontface.css">
 </head>
 <body>
+
+  <!-- The <aside> element is one of the new HTML elements. It is intended to
+  hold content tangentially related to the context around. -->
   <aside>
+
+    <!-- New HTML5 data-* elements allow us store strings (valid JSON as well)
+    inside elements. With JS, we can access them via the dataset attribute. -->
     <section data-blog-section="show-post">
+  
+      <!-- Thanks to tabindex attribute, the element can receive focus. -->
       <section class="comment" tabindex="0">
         <p>John says:</p>
 
         <p>Blah blah blah blah...</p>
 
-        <menu><a class="icon" href="#">❌</a></menu>
+        <menu>
+          <a class="icon" data-method="delete" href="/comments/1">❌</a>
+        </menu>
       </section>
     </section>
   </aside>
+  <!-- Despite the addition in HTML5 of several semantic sectioning elements
+  such as <article>, <header>, <footer>, <aside>, <section>... the <div>
+  elements can be used to provide stylistic scaffolding. -->
   <div id="wrapper">
+    <!-- The element <header> is introduced in HTML5 to keep introductory
+    content for the current section. -->
     <header>
-      <h1><a href="/">Space on Rails!</a></h1>
+      <h1><a href="/post-list">Space on Rails!</a></h1>
+      <!-- The hidden attribute indicates the element is not relevant.
+      The default presentation don't show the element but it could be redefined
+      by using CSS. -->
       <h2 data-blog-section="post-list" hidden>Listing posts</h2>
       <h2 data-blog-section="edit-post" hidden>Editing post</h2>
       <h2 data-blog-section="new-post" hidden>New post</h2>
       <h2 data-blog-section="show-post">Test title</h2>
     </header>
+
+    <!-- Inside this <div> come the different blog sections. -->
     <div>
 
+      <!-- The post-list section shows a paginated list with the posts. -->
       <section id="post-list" hidden>
-        <a class="button">New post</a>
+        <a class="button" href="/posts/new">New post</a>
         <ol>
-          <li><span class="title"><a href="#">Title</a></span>
+          <li><span class="title"><a href="/posts/1">Title</a></span>
             <menu>
-              <a class="icon" href="#">✎</a>
-              <a class="icon" href="#">❌</a>
+              <a class="icon" href="/posts/1/edit">✎</a>
+              <a class="icon" data-method="delete" href="/posts/1">❌</a>
            </menu>
           </li>
         </ol>
         <div class="pagination">
           <span class="disabled">← Previous</span>
           <em class="current">1</em>
-          <a href="#">2</a>
-          <a href="#">3</a>
-          <a href="#">Next →</a>
+          <a href="/posts/?page=2">2</a>
+          <a href="/posts/?page=3">3</a>
+          <a href="/posts/?page=2">Next →</a>
         </div>
       </section>
-      
+
+      <!-- The edit-post section shows a form to modify a post. -->
       <section id="edit-post" hidden>
-        <nav><a class="button">Back</a></nav>
+        <nav><a class="button" href="/posts">Back</a></nav>
         <form>
           <p>
             <label>Title<br />
+              <!-- Following this 'dot' notation in name attributes will allow
+               us to automatize the processment of the form. -->
               <input type="text" name="post.title" />
             </label>
           </p>
@@ -76,8 +113,9 @@
         </form>
       </section>
 
+      <!-- The new-post section shows a form to add a new post. -->
       <section id="new-post" hidden>
-        <nav><a class="button">Back</a></nav>
+        <nav><a class="button" href="/">Back</a></nav>
         <form>
           <p>
             <label>Title<br />
@@ -103,9 +141,11 @@
         </form>
       </section>
 
+      <!-- The show-post section displays a post and its comments in the 
+      <aside> element. -->
       <section id="show-post">
-        <nav><a class="button">Back</a></nav>
-        <menu><a class="icon" href="#">✎</a></menu>
+        <nav><a class="button" href="/">Back</a></nav>
+        <menu><a class="icon" href="/posts/1/edit">✎</a></menu>
         <figure class="post-picture">
         </figure>
 
@@ -131,6 +171,9 @@
 
     </div>
   </div>
+  <!-- The <footer> element is another new HTML5 element intended to hold
+  information about the parent section such as the author, copyrights,
+  disclaimers, site map... -->
   <footer>
     <p><img src="/images/rails.png" alt="Rails logo" /> This is a demo blog
     application powered by <strong>Ruby on Rails</strong>. All the

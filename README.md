@@ -36,14 +36,17 @@ $ rails server
 Project stages
 --------------
 
-The git project has 5 tags matching the different stages of the project:
+The git project has X tags matching the different stages of the project:
 
  0. `v0-plain` is the starting point. All the navigation is handled by the rails
  application and not even CSS has been applied yet.  
  1. `v1-css` is the second stage of maturity of the HTML5 application. CSS has
  been applied but the navigation continues being synchronous and template driven
  via server `*.erb` files.
- 2. `v2-ajax` is the third evolution of the blog. All the navigation has been
+ 2. `v2.1-static` introduces the third evolution of the blog. It is being
+ converted into a web application and the skeleton is provided into the `webapp`
+ folder. 
+ 2. `v2.3-ajax` is the last evolution of the blog. All the navigation has been
  replaced by asynchronous HTTP requests and DOM & history manipulation via JS
  and HTML5 APIs. 
  3. `v3-testsuite` adds the test suite required to validate our architecture.
