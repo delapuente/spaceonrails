@@ -29,7 +29,7 @@ of the HTML standard. -->
 
     <!-- New HTML5 data-* elements allow us store strings (valid JSON as well)
     inside elements. With JS, we can access them via the dataset attribute. -->
-    <section data-blog-section="show-post">
+    <section data-blog-section="show-post" hidden>
   
       <!-- Thanks to tabindex attribute, the element can receive focus. -->
       <section class="comment" tabindex="0">
@@ -54,17 +54,17 @@ of the HTML standard. -->
       <!-- The hidden attribute indicates the element is not relevant.
       The default presentation don't show the element but it could be redefined
       by using CSS. -->
-      <h2 data-blog-section="post-list" hidden>Listing posts</h2>
+      <h2 data-blog-section="post-list">Listing posts</h2>
       <h2 data-blog-section="edit-post" hidden>Editing post</h2>
       <h2 data-blog-section="new-post" hidden>New post</h2>
-      <h2 data-blog-section="show-post">Test title</h2>
+      <h2 data-blog-section="show-post" hidden>Test title</h2>
     </header>
 
     <!-- Inside this <div> come the different blog sections. -->
     <div>
 
       <!-- The post-list section shows a paginated list with the posts. -->
-      <section id="post-list" hidden>
+      <section id="post-list">
         <a class="button" href="/posts/new">New post</a>
         <ol>
           <li><span class="title"><a href="/posts/1">Title</a></span>
@@ -143,7 +143,7 @@ of the HTML standard. -->
 
       <!-- The show-post section displays a post and its comments in the 
       <aside> element. -->
-      <section id="show-post">
+      <section id="show-post" hidden>
         <nav><a class="button" href="/">Back</a></nav>
         <menu><a class="icon" href="/posts/1/edit">✎</a></menu>
         <figure class="post-picture">
