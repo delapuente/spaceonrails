@@ -49,7 +49,7 @@ The git project has 5 tags matching the different stages of the project:
  3. `v3-testsuite` adds the test suite required to validate our architecture.
  4. `v4-done` implements the architecture and passes the test suite.
  
-**NOTE**: At this moment, only `v0-plain` and `v1-css` are available.
+**NOTE**: At this moment, only `v0-plain`, `v1-css` and `v2-ajax` are available.
 
 Changing from one to another is as simple as making check out of the tag. I.e.:
 

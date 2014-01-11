@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Space on Rails!</title>
+  <meta charset="utf-8" />
+  <script src="js/prefixfree.min.js" type="text/javascript"></script>
+  <script defer src="js/application.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="styles/application.css">
+  <link rel="stylesheet" href="styles/fontface.css">
+</head>
+<body>
+  <aside>
+    <section data-blog-section="show-post">
+      <section class="comment" tabindex="0">
+        <p>John says:</p>
+
+        <p>Blah blah blah blah...</p>
+
+        <menu><a class="icon" href="#">❌</a></menu>
+      </section>
+    </section>
+  </aside>
+  <div id="wrapper">
+    <header>
+      <h1><a href="/">Space on Rails!</a></h1>
+      <h2 data-blog-section="post-list" hidden>Listing posts</h2>
+      <h2 data-blog-section="edit-post" hidden>Editing post</h2>
+      <h2 data-blog-section="new-post" hidden>New post</h2>
+      <h2 data-blog-section="show-post">Test title</h2>
+    </header>
+    <div>
+
+      <section id="post-list" hidden>
+        <a class="button">New post</a>
+        <ol>
+          <li><span class="title"><a href="#">Title</a></span>
+            <menu>
+              <a class="icon" href="#">✎</a>
+              <a class="icon" href="#">❌</a>
+           </menu>
+          </li>
+        </ol>
+        <div class="pagination">
+          <span class="disabled">← Previous</span>
+          <em class="current">1</em>
+          <a href="#">2</a>
+          <a href="#">3</a>
+          <a href="#">Next →</a>
+        </div>
+      </section>
+      
+      <section id="edit-post" hidden>
+        <nav><a class="button">Back</a></nav>
+        <form>
+          <p>
+            <label>Title<br />
+              <input type="text" name="post.title" />
+            </label>
+          </p>
+          
+          <p>
+            <label>Post picture<br />
+              <input type="file" name="post.post_picture" />
+            </label>
+          </p>
+         
+          <p>
+            <label>Text<br />
+              <textarea name="post.text"></textarea>
+            </label>
+          </p>
+         
+          <p>
+            <input type="submit" value="Update Post" />
+          </p>
+        </form>
+      </section>
+
+      <section id="new-post" hidden>
+        <nav><a class="button">Back</a></nav>
+        <form>
+          <p>
+            <label>Title<br />
+              <input type="text" name="post.title" />
+            </label>
+          </p>
+          
+          <p>
+            <label>Post picture<br />
+              <input type="file" name="post.post_picture" />
+            </label>
+          </p>
+         
+          <p>
+            <label>Text<br />
+              <textarea name="post.text"></textarea>
+            </label>
+          </p>
+         
+          <p>
+            <input type="submit" value="Create Post" />
+          </p>
+        </form>
+      </section>
+
+      <section id="show-post">
+        <nav><a class="button">Back</a></nav>
+        <menu><a class="icon" href="#">✎</a></menu>
+        <figure class="post-picture">
+        </figure>
+
+        <!-- Here comes the text of the post -->
+
+        <section id="add-comment">
+          <form>
+            <p>
+              <textarea name="comment.body"
+              placeholder="Leave a comment"></textarea>
+            </p>
+            <p class="commenter">
+              <label>by&nbsp;&nbsp;
+                <input type="text" name="comment.commenter">
+              </label>
+            </p>
+            <p>
+              <input type="submit" value="Create Comment">
+            </p>
+          </form>
+        </section>
+      </section>
+
+    </div>
+  </div>
+  <footer>
+    <p><img src="/images/rails.png" alt="Rails logo" /> This is a demo blog
+    application powered by <strong>Ruby on Rails</strong>. All the
+    presentation is provided by the <strong>server side</strong> making use
+    of <tt>*.erb</tt> files for templating.</p>
+    <p>Our goal is to
+    transform the blog into a <strong>rich internet application</strong> by
+    using the HTML5 stack of technologies: HTML5, CSS3 and JavaScript 1.8.
+    </p>
+  </footer>
+</body>
+</html>
