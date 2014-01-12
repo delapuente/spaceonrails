@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>router.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="./docco.css" />
+</head>
+<body>
+<div id="container">
+  <table cellspacing="0" cellpadding="0">
+    <thead>
+    <tr>
+      <th class="docs">
+        
+        <h1>router.js</h1>
+        
+      </th>
+      <th class="code"></th>
+    </tr>
+    </thead>
+    <tbody>
+    
+    
+    <tr id="section-1">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-1">#</a>
+        </div>
+      <h1 id="therouter">The router</h1>
+
+<p>The <strong>router</strong> is a component intended to map URLs with views.
+In a MVC, the <strong>router</strong> is part of the controller. There are several routing
+mechanisms; here we use a simple and didactical one to provide several
+examples of advanced JavaScript uses.</p>
+
+<p>Our proposal is to split our single-page application into several
+<em>navigation sections</em>, each identified by the custom attribute 
+<code>data-navigation-section</code>. When detecting a route, the application will move
+to that section by hidding the current one and showing the new one. </p>
+      </td>
+      <td class="code">
+      <pre><code >
+
+<span class="undefined"></span></code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-2">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-2">#</a>
+        </div>
+      <p>The complete list of all navigation sections.</p>
+      </td>
+      <td class="code">
+      <pre><code > 
+var NAVIGATION_SECTIONS = [<span class="attribute">'post</span>-list', <span class="attribute">'show</span>-post', <span class="attribute">'edit</span>-post', <span class="attribute">'new</span>-post'];
+
+</code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-3">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-3">#</a>
+        </div>
+      <p>An object with pairs of <strong>pattern</strong> and <strong>action</strong>.</p>
+
+<p>Each <strong>pattern</strong> is a <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions">regular expression</a>
+that will be matched against the path of the URL. We use parenthesis to 
+indicate parts of the URL to be remembered and passed to the initialization
+callback.</p>
+
+<p><strong>Actions</strong> are functions. Here we call the <em>function factory</em> <code>goTo()</code>which
+returns another function in charge of hiding the current section and showing
+the new one in addition to call the initializer to, for instance, populate
+the section.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+<span class="keyword">var</span> ROUTES = {
+  <span class="string">'/$'</span>:                  <span class="keyword">goTo</span>(<span class="string">'post-list'</span>, fakeViewInitializer),
+  <span class="string">'/posts$'</span>:             <span class="keyword">goTo</span>(<span class="string">'post-list'</span>, fakeViewInitializer),
+  <span class="string">'/posts/(\\d+)$'</span>:      <span class="keyword">goTo</span>(<span class="string">'show-post'</span>, fakeViewInitializer),
+  <span class="string">'/posts/(\\d+)/edit$'</span>: <span class="keyword">goTo</span>(<span class="string">'edit-post'</span>, fakeViewInitializer),
+  <span class="string">'/posts/new$'</span>:         <span class="keyword">goTo</span>(<span class="string">'new-post'</span>, fakeViewInitializer)
+};
+
+</code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-4">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-4">#</a>
+        </div>
+      <p>In the complete application, going to a section will trigger some initialization
+actions such as fetching data from sever and installing special handlers for
+specific actions. We are simulating this initialization now by simply printing
+the parameters in the console.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+<span class="function"><span class="keyword">function</span> <span class="title">fakeViewInitializer</span><span class="params">(section, getParameters)</span> {</span>
+  <span class="string">'use strict'</span>
+
+  var pathParameters = <span class="transposed_variable">Array.</span><span class="transposed_variable">prototype.</span><span class="transposed_variable">slice.</span>call(arguments, <span class="number">2</span>);
+  <span class="transposed_variable">console.</span><span class="built_in">log</span>(<span class="string">'Section:'</span>, section);
+  <span class="transposed_variable">console.</span><span class="built_in">log</span>(<span class="string">'Get parameters:'</span>, <span class="transposed_variable">JSON.</span>stringify(getParameters));
+  <span class="transposed_variable">console.</span><span class="built_in">log</span>(<span class="string">'Path parameters:'</span>, pathParameters + <span class="string">''</span>);
+}
+
+</code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-5">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-5">#</a>
+        </div>
+      <p>We are not isolating the code right now so we mark the <em>private</em> variables by
+prepending a dash (<code>_</code>) before the name. Just a naming convention.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+<span class="title">var</span> _currentLinks, _currentSection;
+
+</code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-6">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-6">#</a>
+        </div>
+      <p><strong>Function factories</strong> like this are functions which return other functions.
+The inner function can reach the variables of the parent function. Each time
+we call <code>goTo()</code>, a new namespace is created to hold parameters and variables
+and a new <code>_doNavigation()</code> function is created pointing to this new namespace.</p>
+
+<p>This way, back in the <code>ROUTES</code> object, we call <code>goTo()</code> once per URL to
+build new <code>_doNavigation()</code> functions bound to each section. </p>
+      </td>
+      <td class="code">
+      <pre><code >
+<span class="function"><span class="keyword">function</span> <span class="title">goTo</span><span class="params">(sectionName, initializer)</span> {</span>
+  <span class="string">'use strict'</span>
+
+  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="title">_doNavigation</span><span class="params">()</span> {</span>
+  </code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-7">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-7">#</a>
+        </div>
+      <p>The special variable <code>arguments</code> hold each parameter passed to the function.
+  The <code>arguments</code> variable is not a common list so it can not be used as a
+  JS array. To convert it, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice">call the <code>slice()</code></a>
+  Array's method on the <code>arguments</code> object to perform a copy of the list into a
+  standard JS array.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+    var remainingArguments = Array<span class="preprocessor">.prototype</span><span class="preprocessor">.slice</span><span class="preprocessor">.call</span>(arguments, <span class="number">0</span>)<span class="comment">;</span>
+    hideSection(_currentSection)<span class="comment">;</span>
+    _currentSection = sectionName<span class="comment">;</span>
+    showSection(sectionName)<span class="comment">;</span>
+    initializer<span class="preprocessor">.apply</span>(this, [sectionName]<span class="preprocessor">.concat</span>(remainingArguments))<span class="comment">;</span>
+  }<span class="comment">;</span>
+}
+
+</code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-8">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-8">#</a>
+        </div>
+      <p>A clean code reccommendation is to start with running code as soon as possible
+and write dependencies just below. This way you don't read a lot of code pieces
+you don't know how they interact but just the working piece of code. It is your
+choice if I want to go deeper or not. </p>
+      </td>
+      <td class="code">
+      <pre><code >
+<span class="function"><span class="title">startRouter</span><span class="params">()</span>;
+
+<span class="title">function</span> <span class="title">startRouter</span><span class="params">()</span> {
+  </code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-9">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-9">#</a>
+        </div>
+      <p>The <code>'use-strict'</code> pragma is no more than a string telling the JavaScript
+  interpreter we want run this code in <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions_and_function_scope/Strict_mode">strict mode</a>.
+  It has function scope, meaning only the code inside the function with the
+  pragma will be run in strict mode. It is quite important to not write
+  <code>'use-strict'</code> as a global because this will force <strong>all the code</strong> to be
+  run this way causing incompatibilites where legacy mode is still neccessary.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+  <span class="attribute">'use</span> strict'
+
+  </code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-10">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-10">#</a>
+        </div>
+      <p>Here we check for <a href="https://developer.mozilla.org/en-US/docs/Web/API/document.readyState">document state</a>,
+  if all the DOM has been parsed, install the router and forces firs navigation.
+  If not, <a href="https://developer.mozilla.org/en-US/docs/Web/Reference/Events/DOMContentLoaded">wait for DOM to be completely loaded</a>.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+  <span class="keyword">if</span> (<span class="transposed_variable">document.</span>readyState === <span class="string">'interactive'</span>) <span class="cell">{
+    installRouterAndNavigate();  
+  }</span>
+  <span class="keyword">else</span> <span class="cell">{
+    document.addEventListener(<span class="string">'DOMContentLoaded'</span>, installRouterAndNavigate);
+  }</span>
+  
+  </code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-11">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-11">#</a>
+        </div>
+      <p>As you can see, functions can be nested inside functions. Here we use an
+  inner function to reduce code repetition.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+  <span class="function"><span class="keyword">function</span> <span class="title">installRouterAndNavigate</span><span class="params">()</span> {</span>
+    installNavigation();
+    hideAllSections();
+    route(<span class="transposed_variable">window.</span><span class="transposed_variable">location.</span>pathname);
+  }
+}
+
+</code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-12">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-12">#</a>
+        </div>
+      <p>We are taking advantage of normal link elements, <code>&lt;a&gt;</code> to control navigation by
+overwritting what to do when clicking on a link. </p>
+      </td>
+      <td class="code">
+      <pre><code >
+<span class="function"><span class="keyword">function</span> <span class="title">installNavigation</span><span class="params">()</span> {</span>
+  </code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-13">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-13">#</a>
+        </div>
+      <p>The list returned by <code>getElementsByTagName()</code> is what JS call a
+  <strong>live list</strong>. A live list does not need to be updated any more because it
+  always contains the list of elements matching the performed query. This case
+  is the list of all <code>&lt;a&gt;</code> elements.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+  <span class="keyword">if</span> (!window<span class="variable">._currentLinks</span>) {
+    window<span class="variable">._currentLinks</span> = document<span class="variable">.getElementsByTagName</span>(<span class="string">'a'</span>);
+  }
+  
+  </code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-14">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-14">#</a>
+        </div>
+      <p>Given that indexing a list with negative indices result in <code>undefined</code> and no
+  item of a live list can be a falsy, we use this <code>for</code> pattern to get each link
+  element and overwrite its behavior when clicked.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+  <span class="keyword">for</span> (var l = <span class="transposed_variable">_currentLinks.</span><span class="built_in">length</span> - <span class="number">1</span>, a; a = _currentLinks<span class="matrix">[l]</span>; l--) <span class="cell">{
+    a.addEventListener(<span class="string">'click'</span>, doClientNavigation);
+  }</span>
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">doClientNavigation</span><span class="params">(evt)</span> {</span>
+  <span class="string">'use strict'</span>
+
+  </code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-15">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-15">#</a>
+        </div>
+      <p>By calling <code>preventDefault()</code> we avoid the default action of the link which
+  is navigate to the <code>href</code> URL by performing a <code>GET</code> request to the server.  </p>
+      </td>
+      <td class="code">
+      <pre><code >
+  <span class="transposed_variable">evt.</span>preventDefault();
+  <span class="transposed_variable">evt.</span>stopPropagation();
+  route(<span class="transposed_variable">evt.</span><span class="transposed_variable">target.</span>getAttribute(<span class="string">'href'</span>));
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">hideAllSections</span><span class="params">()</span> {</span>
+  <span class="string">'use strict'</span>
+  
+  <span class="transposed_variable">window.</span><span class="transposed_variable">NAVIGATION_SECTIONS.</span>forEach(<span class="function"><span class="keyword">function</span> <span class="params">(sectionName)</span> {</span>
+     hideSection(sectionName);
+  });
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">hideSection</span><span class="params">(sectionName)</span> {</span>
+  <span class="string">'use strict'</span>
+
+  setSectionVisibility(sectionName, false);
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">showSection</span><span class="params">(sectionName)</span> {</span>
+  <span class="string">'use strict'</span>
+
+  setSectionVisibility(sectionName, true);
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">setSectionVisibility</span><span class="params">(sectionName, visibility)</span> {</span>
+  <span class="string">'use strict'</span>
+
+  </code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-16">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-16">#</a>
+        </div>
+      <p>New JavaScript <code>querySelector()</code> and <code>querySelectorAll()</code> methods mimic the
+  famous <em>jQuery</em> behavior and allow CSS selector to query the DOM for a
+  collection of the elements matching the CSS selector provided. Here we are
+  using an <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors">attribute selector</a>.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+  var selector = <span class="string">'[data-navigation-section="'</span> + sectionName + <span class="string">'"]'</span>;
+  var navParts = <span class="transposed_variable">document.</span>querySelectorAll(selector);
+  <span class="keyword">for</span> (var l = <span class="transposed_variable">navParts.</span><span class="built_in">length</span> - <span class="number">1</span>, part; part = navParts<span class="matrix">[l]</span>; l--) <span class="cell">{
+    part.hidden = !visibility;
+  }</span>
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">route</span><span class="params">(href)</span> {</span>
+  <span class="string">'use strict'</span>
+
+  var routes = <span class="transposed_variable">window.</span>ROUTES;
+  var parameters = parseGetParameters(href);
+
+  </code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-17">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-17">#</a>
+        </div>
+      <p>New in JavaScript 1.8, <code>&lt;a&gt;</code> elements implement <a href="https://developer.mozilla.org/en-US/docs/Web/API/URLUtils"><code>URLUtils</code></a>
+  interface which allow us to use the link as an URL parser.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+  var matching, path, parser = document<span class="preprocessor">.createElement</span>(<span class="string">'a'</span>)<span class="comment">;</span>
+  parser<span class="preprocessor">.href</span> = href<span class="comment">;</span>
+  path = parser<span class="preprocessor">.pathname</span><span class="comment">;</span>
+  
+  </code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-18">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-18">#</a>
+        </div>
+      <p>The loop pass through each pattern trying to find a match for the current
+  path. If found, it call the routing action associated to that pattern passing
+  the query parameters as a dictionary and all the groups found in the path.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+  <span class="keyword">for</span> (<span class="keyword">var</span> pattern <span class="keyword">in</span> routes) <span class="keyword">if</span> (routes.hasOwnProperty(pattern)) {
+    matching = path.match(pattern);
+    <span class="keyword">if</span> (matching) {
+      <span class="keyword">var</span> args = [parameters].concat(matching.slice(<span class="number">1</span>));
+      <span class="keyword">return</span> routes[pattern].apply(<span class="literal">null</span>, args);
+    }
+  }
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">parseGetParameters</span><span class="params">(href)</span> {</span>
+  <span class="string">'use strict'</span>
+
+  </code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-19">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-19">#</a>
+        </div>
+      <p>Looking for the querystring of an URL is not hard. Just look for the substring 
+  following the <code>?</code> character until the end or until finding a <code>#</code> character.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+  var matching = <span class="transposed_variable">href.</span>match(/\?(<span class="matrix">[^#]</span>+)/);
+  var result = <span class="cell">{}</span>;
+  <span class="keyword">if</span> (matching &amp;&amp; <span class="transposed_variable">matching.</span><span class="built_in">length</span> === <span class="number">2</span>) <span class="cell">{
+  </code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-20">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-20">#</a>
+        </div>
+      <p>Some functional style is presented here. Note how first we split the
+  querystring by the <code>&amp;</code> character, then pass through the list items
+  applying a second split to separate parameter name and value into tuples.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+    var parameters = matching[<span class="number">1</span>]<span class="preprocessor">.split</span>(<span class="string">'&amp;'</span>)<span class="preprocessor">.map</span>(function (parameterSpec) {
+      return parameterSpec<span class="preprocessor">.split</span>(<span class="string">'='</span>)<span class="comment">;</span>
+    })<span class="comment">;</span>
+  </code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-21">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-21">#</a>
+        </div>
+      <p>Finally, we iterate trough the elements of the array putting them into a
+  dictionary.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+    <span class="transposed_variable">parameters.</span>forEach(<span class="function"><span class="keyword">function</span> <span class="params">(parameter)</span> {</span>
+      result<span class="matrix">[parameter[<span class="number">0</span>]</span>] = parameter<span class="matrix">[<span class="number">1</span>]</span>;
+    });
+  }
+  <span class="keyword">return</span> result;
+}
+</code></pre>
+      </td>
+    </tr>
+    
+  </table>
+</div>
+</body>
+</html>
+
+
+
