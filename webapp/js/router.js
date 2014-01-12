@@ -14,6 +14,9 @@ to that section by hidding the current one and showing the new one.
 */
 
 /*!
+The code
+--------
+
 The complete list of all navigation sections.
 */ 
 var NAVIGATION_SECTIONS = ['post-list', 'show-post', 'edit-post', 'new-post'];
