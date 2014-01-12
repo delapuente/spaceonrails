@@ -39,20 +39,30 @@ Project stages
 The git project has X tags matching the different stages of the project:
 
  0. `v0-plain` is the starting point. All the navigation is handled by the rails
- application and not even CSS has been applied yet.  
- 1. `v1-css` is the second stage of maturity of the HTML5 application. CSS has
- been applied but the navigation continues being synchronous and template driven
- via server `*.erb` files.
- 2. `v2.1-static` introduces the third evolution of the blog. It is being
- converted into a web application and the skeleton is provided into the `webapp`
- folder. 
- 2. `v2.3-ajax` is the last evolution of the blog. All the navigation has been
- replaced by asynchronous HTTP requests and DOM & history manipulation via JS
- and HTML5 APIs. 
- 3. `v3-testsuite` adds the test suite required to validate our architecture.
- 4. `v4-done` implements the architecture and passes the test suite.
- 
-**NOTE**: At this moment, only `v0-plain`, `v1-css` and `v2-ajax` are available.
+ application and not even CSS has been applied yet.
+
+ 1. `v1-css` is a little evolution over the starting point. Some advanced CSS
+ has been applied but the navigation continues being synchronous and template
+ driven via server `*.erb` files.
+
+ 2. `v2.1-router` starts the web application providing the `webapp` folder
+ as well as the skeleton for the router module (`webapp/js/router.js`).
+
+ 3. `v2.2-template` continues with the web application by providing the
+ skeleton for the template processor (`webapp/js/template.js`), a little
+ software to manipulate the DOM.
+
+ 4. `v2.3-webservice` introduces the final stage of the web application and
+ provide the skeleton for the different controllers for each blog section
+ (`webapp/js/controllers/`). Each controller will modify the model by
+ using a REST API provided by the server in rails.
+
+ 5. `v3-testsuite` adds the test suite required to validate our architecture.
+
+ 6. `v4-done` implements the architecture and passes the test suite.
+
+**NOTE**: At this moment, only `v0-plain`, `v1-css` and `v2.1-router` are
+available.
 
 Changing from one to another is as simple as making check out of the tag. I.e.:
 
@@ -67,3 +77,7 @@ make:
 $ git checkout v0-plain
 $ git checkout -b my-branch-from-v0
 ```
+
+Don't try to follow the story of the repository because it is likely to change
+and being reorganized. The only purpose of tags is to provide different
+snapshots to work from.
