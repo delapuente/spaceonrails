@@ -15,7 +15,7 @@ of the HTML standard. -->
   <!-- The defer attribute tells the browser to wait for DOM completion before
   executing the script. It was formerly achieved by including the script at the
   end of the document. -->
-  <script defer src="js/application.js" type="text/javascript"></script>
+  <script defer src="js/router.js" type="text/javascript"></script>
 
   <!-- Here are the stylesheets for our web application. -->
   <link rel="stylesheet" href="styles/application.css">
@@ -29,7 +29,7 @@ of the HTML standard. -->
 
     <!-- New HTML5 data-* elements allow us store strings (valid JSON as well)
     inside elements. With JS, we can access them via the dataset attribute. -->
-    <section data-blog-section="show-post" hidden>
+    <section data-navigation-section="show-post" hidden>
   
       <!-- Thanks to tabindex attribute, the element can receive focus. -->
       <section class="comment" tabindex="0">
@@ -54,17 +54,17 @@ of the HTML standard. -->
       <!-- The hidden attribute indicates the element is not relevant.
       The default presentation don't show the element but it could be redefined
       by using CSS. -->
-      <h2 data-blog-section="post-list">Listing posts</h2>
-      <h2 data-blog-section="edit-post" hidden>Editing post</h2>
-      <h2 data-blog-section="new-post" hidden>New post</h2>
-      <h2 data-blog-section="show-post" hidden>Test title</h2>
+      <h2 data-navigation-section="post-list">Listing posts</h2>
+      <h2 data-navigation-section="edit-post" hidden>Editing post</h2>
+      <h2 data-navigation-section="new-post" hidden>New post</h2>
+      <h2 data-navigation-section="show-post" hidden>Test title</h2>
     </header>
 
     <!-- Inside this <div> come the different blog sections. -->
     <div>
 
       <!-- The post-list section shows a paginated list with the posts. -->
-      <section id="post-list">
+      <section id="post-list" data-navigation-section="post-list" >
         <a class="button" href="/posts/new">New post</a>
         <ol>
           <li><span class="title"><a href="/posts/1">Title</a></span>
@@ -84,7 +84,7 @@ of the HTML standard. -->
       </section>
 
       <!-- The edit-post section shows a form to modify a post. -->
-      <section id="edit-post" hidden>
+      <section id="edit-post" data-navigation-section="edit-post" hidden>
         <nav><a class="button" href="/posts">Back</a></nav>
         <form>
           <p>
@@ -114,7 +114,7 @@ of the HTML standard. -->
       </section>
 
       <!-- The new-post section shows a form to add a new post. -->
-      <section id="new-post" hidden>
+      <section id="new-post" data-navigation-section="new-post" hidden>
         <nav><a class="button" href="/">Back</a></nav>
         <form>
           <p>
@@ -143,7 +143,7 @@ of the HTML standard. -->
 
       <!-- The show-post section displays a post and its comments in the 
       <aside> element. -->
-      <section id="show-post" hidden>
+      <section id="show-post" data-navigation-section="show-post" hidden>
         <nav><a class="button" href="/">Back</a></nav>
         <menu><a class="icon" href="/posts/1/edit">✎</a></menu>
         <figure class="post-picture">
@@ -175,13 +175,12 @@ of the HTML standard. -->
   information about the parent section such as the author, copyrights,
   disclaimers, site map... -->
   <footer>
-    <p><img src="/images/rails.png" alt="Rails logo" /> This is a demo blog
-    application powered by <strong>Ruby on Rails</strong>. All the
-    presentation is provided by the <strong>server side</strong> making use
-    of <tt>*.erb</tt> files for templating.</p>
-    <p>Our goal is to
-    transform the blog into a <strong>rich internet application</strong> by
-    using the HTML5 stack of technologies: HTML5, CSS3 and JavaScript 1.8.
+    <p><img src="/images/html5.png" alt="Rails logo" /> This is a demo blog
+    web application powered by <strong>HTML5</strong>. All the navigation is
+    performed in the <strong>client side</strong> making use of a routing
+    mechanism.</p>
+    <p>Now our goal is to use AJAX to retrieve the information for each
+    section by using the webservice implemented in the rails application.
     </p>
   </footer>
 </body>

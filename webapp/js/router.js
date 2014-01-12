@@ -1,0 +1,108 @@
+/*!
+The router
+==========
+
+The **router** is a component intended to map URLs with views.
+In a MVC, the **router** is part of the controller. There are several routing
+mechanisms; here we use a simple and didactical one to provide several
+examples of advanced JavaScript uses.
+
+Our proposal is to split our single-page application into several
+_navigation sections_, each identified by the custom attribute 
+`data-navigation-section`. When detecting a route, the application will move
+to that section by hidding the current one and showing the new one. 
+*/
+
+var NAVIGATION_SECTIONS = ['post-list', 'show-post', 'edit-post', 'new-post'];
+
+var ROUTES = {
+  /*
+  Define here your patterns by using regular expressions and your routing
+  actions by using functions in the form:
+
+    'pattern1' : action,
+    'pattern2' : anotherAction,
+    ...
+  */
+};
+
+startRouter();
+
+function startRouter() {
+  'use strict'
+
+  /* Put your initialization code here. You should: */
+
+  // 1. Install a navigation callback for each <a> element
+  installNavigation();
+
+  // 2. Navigate to the current route
+  route(window.location.pathname);
+}
+
+function installNavigation() {
+  'use strict'
+  
+  /* Use this function when you want to intervene the current links of the
+  application: */
+
+  // 1. Get all links
+  
+  // 2. Install the `doClientNavigation()` callback when clicking
+}
+
+function doClientNavigation(evt) {
+  'use strict'
+
+  // 1. Prevent the real navigation from happening
+  
+  // 2. Navigate to the proper view
+}
+
+function hideAllSections() {
+  'use strict'
+  
+  /* Hide all navigation sections */
+}
+
+function hideSection(sectionName) {
+  'use strict'
+
+  /* Hide all HTML elements belonging to the navigation section `sectionName` */
+}
+
+function showSection(sectionName) {
+  'use strict'
+
+  /* Show all HTML elements belonging to the navigation section `sectionName` */
+}
+
+function route(href) {
+  'use strict'
+
+  /* This is the main function of the router: */
+  
+  // 1. Determine wich routing action should be performed depending on the
+  // matching pattern.
+
+  // 2. Extract from the path, the parameters in the querystring of the URL
+  // and put them in a dictionary.
+  var parameters = parseGetParameters(href);
+  
+  // 2. Calls the routing action passing it the parameters as first argument
+  // and an additional parameter for each group in the pattern.
+}
+
+function parseGetParameters(href) {
+  'use strict'
+
+  /* Convert the querystring: ?param1=value1&param2=value2... into an object:
+  {
+    'param1': 'value1',
+    'param2': 'value2',
+    ...
+  }
+  
+  Try to golf (minimize) the code!
+  */
+}
