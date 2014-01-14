@@ -32,17 +32,18 @@ of the HTML standard. -->
     <!-- New HTML5 data-* elements allow us store strings (valid JSON as well)
     inside elements. With JS, we can access them via the dataset attribute. -->
     <section data-navigation-section="show-post" hidden>
-      <div></div>
-      <!-- Thanks to tabindex attribute, the element can receive focus. -->
-      <section class="comment" tabindex="0" data-template>
-        <p>{{ commenter }} says:</p>
+      <div>
+        <!-- Thanks to tabindex attribute, the element can receive focus. -->
+        <section class="comment" tabindex="0" data-template="show-post.comment">
+          <p>{{ commenter }} says:</p>
 
-        <p>{{ body }}</p>
+          <p>{{ body }}</p>
 
-        <menu>
-          <a class="icon" data-method="delete" href="/comments/{{ id }}">❌</a>
-        </menu>
-      </section>
+          <menu>
+            <a class="icon" data-method="delete" href="/comments/{{ id }}">❌</a>
+          </menu>
+        </section>
+      </div>
     </section>
   </aside>
   <!-- Despite the addition in HTML5 of several semantic sectioning elements
@@ -59,8 +60,9 @@ of the HTML standard. -->
       <h2 data-navigation-section="post-list">Listing posts</h2>
       <h2 data-navigation-section="edit-post" hidden>Editing post</h2>
       <h2 data-navigation-section="new-post" hidden>New post</h2>
-      <h2 data-template>{{ title }}</h2>
-      <div data-navigation-section="show-post" hidden></div>
+      <div data-navigation-section="show-post" hidden>
+        <h2 data-template="show-post.title">{{ title }}</h2>
+      </div>
     </header>
 
     <!-- Inside this <div> come the different blog sections. -->
@@ -69,8 +71,8 @@ of the HTML standard. -->
       <!-- The post-list section shows a paginated list with the posts. -->
       <section id="post-list" data-navigation-section="post-list" >
         <a class="button" href="/posts/new">New post</a>
-        <ol data-template>
-          <li>
+        <ol class="post-list">
+          <li data-template="post-list.entry">
             <span class="title"><a href="/posts/{{ id }}">{{ title }}</a></span>
             <menu>
               <a class="icon" href="/posts/{{ id }}/edit">✎</a>
@@ -78,48 +80,46 @@ of the HTML standard. -->
            </menu>
           </li>
         </ol>
-        <ol class="post-list">
-        </ol>
-        <div data-template class="pagination">
-          <a href="/posts/?page={{}}">← Previous</a>
-          <em class="current">{{}}</em>
-          <a href="/posts/?page={{}}">{{}}</a>
-          <a href="/posts/?page={{}}">Next →</a>
-        </div>
         <div class="pagination">
+          <a data-template="pagination.previous"
+          href="/posts/?page={{}}">← Previous</a>
+          <em data-template="pagination.current" class="current">{{}}</em>
+          <a data-template="pagination.page" href="/posts/?page={{}}">{{}}</a>
+          <a data-template="pagination.next" href="/posts/?page={{}}">Next →</a>
         </div>
       </section>
 
       <!-- The edit-post section shows a form to modify a post. -->
       <section id="edit-post" data-navigation-section="edit-post" hidden>
         <nav><a class="button" href="/posts">Back</a></nav>
-        <div></div>
-        <form data-template>
-          <p>
-            <label>Title<br />
-              <!-- Following this 'dot' notation in name attributes will allow
-               us to automatize the processment of the form. -->
-              <input type="text" name="post.title" value="{{ title }}" />
-            </label>
-          </p>
+        <div>
+          <form data-template="post-form">
+            <p>
+              <label>Title<br />
+                <!-- Following this 'dot' notation in name attributes will allow
+                 us to automatize the processment of the form. -->
+                <input type="text" name="post.title" value="{{ title }}" />
+              </label>
+            </p>
 
-          <p>
-            <label>Post picture<br />
-              <input type="file" name="post.post_picture"
-              value="{{ post_picture }}" />
-            </label>
-          </p>
+            <p>
+              <label>Post picture<br />
+                <input type="file" name="post.post_picture"
+                value="{{ post_picture }}" />
+              </label>
+            </p>
 
-          <p>
-            <label>Text<br />
-              <textarea name="post.text">{{ text }}</textarea>
-            </label>
-          </p>
+            <p>
+              <label>Text<br />
+                <textarea name="post.text">{{ text }}</textarea>
+              </label>
+            </p>
 
-          <p>
-            <input type="submit" value="Update Post" />
-          </p>
-        </form>
+            <p>
+              <input type="submit" value="Update Post" />
+            </p>
+          </form>
+        </div>
       </section>
 
       <!-- The new-post section shows a form to add a new post. -->
@@ -132,31 +132,32 @@ of the HTML standard. -->
       <aside> element. -->
       <section id="show-post" data-navigation-section="show-post" hidden>
         <nav><a class="button" href="/">Back</a></nav>
-        <div></div>
-        <div data-template>
-          <menu><a class="icon" href="/posts/{{ id }}/edit">✎</a></menu>
-          <figure class="post-picture">
-            <img src="{{ post_picture }}" />
-          </figure>
+        <div>
+          <article data-template="show-post.post">
+            <menu><a class="icon" href="/posts/{{ id }}/edit">✎</a></menu>
+            <figure class="post-picture">
+              <img src="{{ post_picture }}" />
+            </figure>
 
-          {{ text }}
+            {{ text }}
 
-          <section id="add-comment">
-            <form>
-              <p>
-                <textarea name="comment.body"
-                placeholder="Leave a comment"></textarea>
-              </p>
-              <p class="commenter">
-                <label>by&nbsp;&nbsp;
-                  <input type="text" name="comment.commenter">
-                </label>
-              </p>
-              <p>
-                <input type="submit" value="Create Comment">
-              </p>
-            </form>
-          </section>
+            <section id="add-comment">
+              <form>
+                <p>
+                  <textarea name="comment.body"
+                  placeholder="Leave a comment"></textarea>
+                </p>
+                <p class="commenter">
+                  <label>by&nbsp;&nbsp;
+                    <input type="text" name="comment.commenter">
+                  </label>
+                </p>
+                <p>
+                  <input type="submit" value="Create Comment">
+                </p>
+              </form>
+            </section>
+          </article>
         </div>
       </section>
 

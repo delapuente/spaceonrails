@@ -1,24 +1,17 @@
 
-describe('The Template class', function () {
+describe('The template library', function () {
   'use strict'
 
-  var fakeDocument;
+  var Template = template.Template;
+  var getHTML = template.getHTML;
 
+  var fakeDocument;
   beforeEach(function () {
     fakeDocument = document.createElement('div');
-    fakeDocument.innerHTML =
-      '<span><a href="/post/{{ id }}">{{title}}</a></span>';
-  });
-
-  var getHTML = Template.prototype.getHTML;
-
-  describe('`getHTML()` helper function', function () {
-    it('gets the HTML for an element.', function () {
-      var test = document.createElement('div');
-      test.innerHTML = '<span>Test</span>';
-      expect(Template.prototype.getHTML(test))
-        .toBe('<div><span>Test</span></div>');
-    });
+    fakeDocument = document.implementation.createHTMLDocument();
+    fakeDocument.body.innerHTML =
+      '<span data-template="test"><a href="/post/{{ id }}">{{title}}</a>' +
+      '</span>';
   });
 
   describe('Template instances', function () {
@@ -85,6 +78,56 @@ describe('The Template class', function () {
         expect(getHTML(rendered)).toBe('<span>test</span>');
       });
 
+    });
+
+  });
+
+  describe('`getHTML()` helper function', function () {
+    it('gets the HTML for an element.', function () {
+      var test = document.createElement('div');
+      test.innerHTML = '<span>Test</span>';
+      expect(getHTML(test)).toBe('<div><span>Test</span></div>');
+    });
+  });
+
+  describe('the `gatherTemplates()` utility', function () {
+
+    it('collects and detach from the passed node all the templates returning' +
+    'a dictionary of templates indexed by the names of the template.',
+    function () {
+      var templateLibrary = template.gatherTemplates(fakeDocument);
+      expect(templateLibrary.test).toBeDefined();
+      expect(templateLibrary.test instanceof Template).toBe(true);
+      expect(getHTML(templateLibrary.test.reference))
+        .toBe('<span data-template="test">' +
+              '<a href="/post/{{ id }}">{{title}}</a></span>');
+      expect(fakeDocument.body.children.length).toBe(0);
+    });
+
+    it('allows dot notation inside a name template to nest templates.',
+    function () {
+      fakeDocument.body.innerHTML =
+        '<span data-template="test.a"><a href="/post/{{ id }}">{{title}}</a>' +
+        '</span>' +
+        '<span data-template="test.b"><a href="/post/{{ id }}">{{title}}</a>' +
+        '</span>';
+      var templateLibrary = template.gatherTemplates(fakeDocument);
+      expect(typeof templateLibrary.test).toBe('object');
+      expect(templateLibrary.test.a instanceof Template).toBe(true);
+      expect(templateLibrary.test.b instanceof Template).toBe(true);
+      expect(fakeDocument.body.children.length).toBe(0);
+    });
+
+    it('complains if repeated ids found', function () {
+      fakeDocument.body.innerHTML =
+        '<span data-template="test.a"><a href="/post/{{ id }}">{{title}}</a>' +
+        '</span>' +
+        '<span data-template="test.a"><a href="/post/{{ id }}">{{title}}</a>' +
+        '</span>';
+      function gatherWithRepeatedIds() {
+        var templateLibrary = Template.gatherTemplates(fakeDocument);
+      }
+      expect(gatherWithRepeatedIds).toThrow();
     });
 
   });

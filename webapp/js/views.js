@@ -7,6 +7,19 @@ The code
 --------
 */
 
+if (document.readyState !== 'loading') {
+  gatherTemplates();
+}
+else {
+  document.addEventListener('DOMContentLoaded', gatherTemplates);
+}
+
+var templates;
+function gatherTemplates() {
+  document.removeEventListener('DOMContentLoaded', gatherTemplates);
+  templates = template.gatherTemplates(document);
+}
+
 var FAKE_POST_LIST = {
   "page": 2,
   "per_page": 5,
@@ -58,15 +71,15 @@ var FAKE_COMMENTS = [
 ];
 
 function postListView(section, parameters) {
+
   buildList();
   buildPagination();
+  installNavigation();
 
   function buildList() {
-    var section = document.getElementById('post-list');
-    var liReference = section.querySelector('ol[data-template] li');
-    var template = new Template(liReference);
-    var entries = template.render(FAKE_POST_LIST.entries);
-    var postList = section.querySelector('ol.post-list');
+    var entryTemplate = templates['post-list'].entry;
+    var entries = entryTemplate.render(FAKE_POST_LIST.entries);
+    var postList = document.querySelector('#post-list ol.post-list');
     postList.innerHTML = '';
     postList.appendChild(entries);
   }
@@ -77,13 +90,12 @@ function postListView(section, parameters) {
     var totalEntries = FAKE_POST_LIST.total_entries;
     var lastPage = Math.ceil(totalEntries / perPage);
 
-    var paginationTemplate = document.getElementsByClassName('pagination')[0];
-    var previousTemplate = new Template(paginationTemplate.firstElementChild);
-    var nextTemplate = new Template(paginationTemplate.lastElementChild);
-    var currentTemplate = new Template(paginationTemplate.children[1]);
-    var pageTemplate = new Template(paginationTemplate.children[2]);
+    var previousTemplate = templates.pagination.previous;
+    var nextTemplate = templates.pagination.next;
+    var currentTemplate = templates.pagination.current;
+    var pageTemplate = templates.pagination.page;
 
-    var paginationContainer = document.getElementsByClassName('pagination')[1];
+    var paginationContainer = document.getElementsByClassName('pagination')[0];
     paginationContainer.innerHTML = '';
     if (currentPage > 1) {
       paginationContainer.appendChild(previousTemplate.render(currentPage - 1));
@@ -96,8 +108,6 @@ function postListView(section, parameters) {
     if (currentPage < lastPage) {
       paginationContainer.appendChild(nextTemplate.render(currentPage + 1));
     }
-
-    installNavigation();
   }
 }
 
@@ -107,24 +117,21 @@ function showPostView(section, parameters, postId) {
   buildPost();
 
   function buildTitle() {
-    var subtitleTemplate =
-      new Template(document.querySelector('header h2[data-template]'));
+    var subtitleTemplate = templates['show-post'].title;
     var subtitleContainer = document.querySelector('header div');
     subtitleContainer.innerHTML = '';
     subtitleContainer.appendChild(subtitleTemplate.render(FAKE_POST));
   }
 
   function buildComments() {
-    var commentTemplate =
-      new Template(document.querySelector('.comment[data-template]'));
+    var commentTemplate = templates['show-post'].comment;
     var commentContainer = document.querySelector('aside div');
     commentContainer.innerHTML = '';
     commentContainer.appendChild(commentTemplate.render(FAKE_COMMENTS));
   }
 
   function buildPost() {
-    var postTemplate =
-      new Template(document.querySelector('#show-post [data-template]'));
+    var postTemplate = templates['show-post'].post;
     var postContainer = document.querySelector('#show-post div');
     postContainer.innerHTML = '';
     postContainer.appendChild(postTemplate.render(FAKE_POST));
@@ -132,19 +139,16 @@ function showPostView(section, parameters, postId) {
 }
 
 function editPostView(section, parameters, postId) {
-  var editSection = document.getElementById('edit-post');
-  var formTemplate = new Template(editSection.querySelector('[data-template]'));
-  var formContainer = editSection.querySelector('div');
+  var formTemplate = templates['post-form'];
+  var formContainer = document.querySelector('#edit-post div');
   formContainer.innerHTML = '';
   formContainer.appendChild(formTemplate.render(FAKE_POST));
 }
 
 function newPostView() {
   var emptyPost = { title: '', text: '', post_picture: '' };
-  var editSection = document.getElementById('edit-post');
-  var formTemplate = new Template(editSection.querySelector('[data-template]'));
-  var newSection = document.getElementById('new-post');
-  var formContainer = newSection.querySelector('div');
+  var formTemplate = templates['post-form'];
+  var formContainer = document.querySelector('#new-post div');
   formContainer.innerHTML = '';
   formContainer.appendChild(formTemplate.render(emptyPost));
 }

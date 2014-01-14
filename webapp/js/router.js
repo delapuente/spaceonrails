@@ -115,7 +115,7 @@ function startRouter() {
   if all the DOM has been parsed, install the router and forces firs navigation.
   If not, [wait for DOM to be completely loaded](https://developer.mozilla.org/en-US/docs/Web/Reference/Events/DOMContentLoaded).
   */
-  if (document.readyState === 'interactive') {
+  if (document.readyState !== 'loading') {
     installRouterAndNavigate();
   }
   else {
