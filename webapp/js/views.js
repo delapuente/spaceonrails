@@ -2,11 +2,16 @@
 Views
 =====
 
+Views are represented by functions triggered by the router when enabling a
+section. Basically, the duty of a view is to ask the model for data and use it
+to populate a template. Then place the template in the proper location.
+
 /*!
 The code
 --------
-*/
 
+Once the DOM is ready, we know for sure we have all the templates.
+*/
 if (document.readyState !== 'loading') {
   gatherTemplates();
 }
@@ -20,6 +25,10 @@ function gatherTemplates() {
   templates = template.gatherTemplates(document);
 }
 
+/*!
+Here there are some fake objects emulating a post list, a single post and
+some comments.
+*/
 var FAKE_POST_LIST = {
   "page": 2,
   "per_page": 5,
@@ -70,6 +79,10 @@ var FAKE_COMMENTS = [
   { "id":5,"commenter":"Jimmy","body":"Jimmy says something.","post_id":1 },
 ];
 
+/*!
+Views are self descriptives. We don't use any parameter yet but this will change
+once model.js is implemented.
+*/
 function postListView(section, parameters) {
 
   buildList();
@@ -111,6 +124,10 @@ function postListView(section, parameters) {
   }
 }
 
+/*!
+Notice the repeated patterns along views and try to imagine how to reduce this
+repetition. You will refactor this code soon.
+*/
 function showPostView(section, parameters, postId) {
   buildTitle();
   buildComments();

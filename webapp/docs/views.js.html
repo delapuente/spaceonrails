@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>views.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="./docco.css" />
+</head>
+<body>
+<div id="container">
+  <table cellspacing="0" cellpadding="0">
+    <thead>
+    <tr>
+      <th class="docs">
+        
+        <h1>views.js</h1>
+        
+      </th>
+      <th class="code"></th>
+    </tr>
+    </thead>
+    <tbody>
+    
+    
+    <tr id="section-1">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-1">#</a>
+        </div>
+      <h1 id="views">Views</h1>
+
+<p>Views are represented by functions triggered by the router when enabling a
+section. Basically, the duty of a view is to ask the model for data and use it
+to populate a template. Then place the template in the proper location.</p>
+
+<p>/*!</p>
+
+<h2 id="thecode">The code</h2>
+
+<p>Once the DOM is ready, we know for sure we have all the templates.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+<span class="function"><span class="title">if</span> <span class="params">(document.ready<span class="variable">State</span> !== 'loading')</span> {
+  <span class="title">gatherTemplates</span><span class="params">()</span>;
+}
+<span class="title">else</span> {
+  <span class="title">document</span>.<span class="title">addEventListener</span><span class="params">('<span class="variable">DOMContentLoaded</span>', gather<span class="variable">Templates</span>)</span>;
+}
+
+<span class="title">var</span> <span class="title">templates</span>;
+<span class="title">function</span> <span class="title">gatherTemplates</span><span class="params">()</span> {
+  <span class="title">document</span>.<span class="title">removeEventListener</span><span class="params">('<span class="variable">DOMContentLoaded</span>', gather<span class="variable">Templates</span>)</span>;
+  <span class="title">templates</span> = <span class="title">template</span>.<span class="title">gatherTemplates</span><span class="params">(document)</span>;
+}
+
+</code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-2">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-2">#</a>
+        </div>
+      <p>Here there are some fake objects emulating a post list, a single post and
+some comments.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+<span class="comment">var</span> <span class="comment">FAKE_POST_LIST</span> <span class="comment">=</span> <span class="comment">{</span>
+  <span class="comment">"page":</span> <span class="comment">2</span>,
+  <span class="comment">"per_page":</span> <span class="comment">5</span>,
+  <span class="comment">"total_entries":</span> <span class="comment">15</span>,
+  <span class="comment">"entries":</span> <span class="title">[</span>
+    <span class="comment">{</span> <span class="comment">"id":</span>  <span class="comment">6</span>, <span class="comment">"title":</span> <span class="comment">"Sample</span> <span class="comment">post</span> <span class="comment">6"</span> <span class="comment">}</span>,
+    <span class="comment">{</span> <span class="comment">"id":</span>  <span class="comment">7</span>, <span class="comment">"title":</span> <span class="comment">"Sample</span> <span class="comment">post</span> <span class="comment">7"</span> <span class="comment">}</span>,
+    <span class="comment">{</span> <span class="comment">"id":</span>  <span class="comment">8</span>, <span class="comment">"title":</span> <span class="comment">"Sample</span> <span class="comment">post</span> <span class="comment">8"</span> <span class="comment">}</span>,
+    <span class="comment">{</span> <span class="comment">"id":</span>  <span class="comment">9</span>, <span class="comment">"title":</span> <span class="comment">"Sample</span> <span class="comment">post</span> <span class="comment">9"</span> <span class="comment">}</span>,
+    <span class="comment">{</span> <span class="comment">"id":</span> <span class="comment">10</span>, <span class="comment">"title":</span> <span class="comment">"Sample</span> <span class="comment">post</span> <span class="comment">10"</span> <span class="comment">}</span>
+  <span class="title">]</span>
+<span class="comment">};</span>
+
+<span class="comment">var</span> <span class="comment">FAKE_POST</span> <span class="comment">=</span> <span class="comment">{</span>
+  <span class="comment">"id":</span> <span class="comment">1</span>,
+  <span class="comment">"title":</span> <span class="comment">"A</span> <span class="comment">sample</span> <span class="comment">post"</span>,
+  <span class="comment">"text":</span> <span class="comment">"</span>&lt;<span class="comment">p</span>&gt;<span class="comment">Lorem</span> <span class="comment">ipsum</span> <span class="comment">dolor</span> <span class="comment">sit</span> <span class="comment">amet</span>, <span class="comment">consectetur</span> <span class="comment">adipiscing</span> <span class="comment">elit</span>. <span class="comment">Ut</span> <span class="comment">"</span> <span class="literal">+</span>
+          <span class="comment">"risus</span> <span class="comment">leo</span>, <span class="comment">tristique</span> <span class="comment">vitae</span> <span class="comment">ultricies</span> <span class="comment">vel</span>, <span class="comment">eleifend</span> <span class="comment">fermentum</span> <span class="comment">au"</span> <span class="literal">+</span>
+          <span class="comment">"gue</span>. <span class="comment">Mauris</span> <span class="comment">a</span> <span class="comment">nunc</span> <span class="comment">aliquet</span> <span class="comment">neque</span> <span class="comment">laoreet</span> <span class="comment">bibendum</span> <span class="comment">eu</span> <span class="comment">mollis</span> <span class="comment">eni"</span> <span class="literal">+</span>
+          <span class="comment">"m</span>. <span class="comment">Vivamus</span> <span class="comment">semper</span> <span class="comment">tempus</span> <span class="comment">ante</span>, <span class="comment">vel</span> <span class="comment">suscipit</span> <span class="comment">orci</span>. <span class="comment">Proin</span> <span class="comment">non</span> <span class="comment">fel"</span> <span class="literal">+</span>
+          <span class="comment">"is</span> <span class="comment">in</span> <span class="comment">magna</span> <span class="comment">tempus</span> <span class="comment">commodo</span>. <span class="comment">Nullam</span> <span class="comment">condimentum</span> <span class="comment">tincidunt</span> <span class="comment">nulla</span> <span class="comment">"</span> <span class="literal">+</span>
+          <span class="comment">"elementum</span> <span class="comment">aliquam</span>. <span class="comment">Etiam</span> <span class="comment">ligula</span> <span class="comment">erat</span>, <span class="comment">ultrices</span> <span class="comment">vitae</span> <span class="comment">accumsan</span> <span class="comment">e"</span> <span class="literal">+</span>
+          <span class="comment">"get</span>, <span class="comment">tincidunt</span> <span class="comment">luctus</span> <span class="comment">felis</span>. <span class="comment">Sed</span> <span class="comment">eget</span> <span class="comment">augue</span> <span class="comment">convallis</span>, <span class="comment">laoreet</span> <span class="comment">"</span> <span class="literal">+</span>
+          <span class="comment">"eros</span> <span class="comment">vel</span>, <span class="comment">sodales</span> <span class="comment">ante</span>. <span class="comment">Sed</span> <span class="comment">vulputate</span> <span class="comment">adipiscing</span> <span class="comment">magna</span>, <span class="comment">et</span> <span class="comment">laci"</span> <span class="literal">+</span>
+          <span class="comment">"nia</span> <span class="comment">leo</span> <span class="comment">posuere</span> <span class="comment">in</span>. <span class="comment">In</span> <span class="comment">at</span> <span class="comment">justo</span> <span class="comment">urna</span>. <span class="comment">Vestibulum</span> <span class="comment">molestie</span>, <span class="comment">mi</span> <span class="comment">s"</span> <span class="literal">+</span>
+          <span class="comment">"ed</span> <span class="comment">volutpat</span> <span class="comment">pulvinar</span>, <span class="comment">libero</span> <span class="comment">dolor</span> <span class="comment">blandit</span> <span class="comment">est</span>, <span class="comment">non</span> <span class="comment">fringilla</span> <span class="comment">m"</span> <span class="literal">+</span>
+          <span class="comment">"etus</span> <span class="comment">lacus</span> <span class="comment">sed</span> <span class="comment">mi</span>. <span class="comment">Ut</span> <span class="comment">felis</span> <span class="comment">odio</span>, <span class="comment">blandit</span> <span class="comment">sed</span> <span class="comment">dolor</span> <span class="comment">id</span>, <span class="comment">tempus</span> <span class="comment">"</span> <span class="literal">+</span>
+          <span class="comment">"gravida</span> <span class="comment">ante</span>. <span class="comment">Pellentesque</span> <span class="comment">ultrices</span>, <span class="comment">massa</span> <span class="comment">id</span> <span class="comment">hendrerit</span> <span class="comment">placera"</span> <span class="literal">+</span>
+          <span class="comment">"t</span>, <span class="comment">urna</span> <span class="comment">orci</span> <span class="comment">aliquet</span> <span class="comment">nulla</span>, <span class="comment">nec</span> <span class="comment">consectetur</span> <span class="comment">odio</span> <span class="comment">sem</span> <span class="comment">vel</span> <span class="comment">justo</span>.<span class="comment">"</span> <span class="literal">+</span>
+          <span class="comment">"</span>&lt;<span class="comment">/p</span>&gt;&lt;<span class="comment">p</span>&gt;<span class="comment">Curabitur</span> <span class="comment">a</span> <span class="comment">ipsum</span> <span class="comment">lobortis</span>, <span class="comment">suscipit</span> <span class="comment">eros</span> <span class="comment">at</span>, <span class="comment">tempor</span> <span class="comment">sap"</span> <span class="literal">+</span>
+          <span class="comment">"ien</span>. <span class="comment">Cras</span> <span class="comment">sed</span> <span class="comment">semper</span> <span class="comment">eros</span>, <span class="comment">eu</span> <span class="comment">pellentesque</span> <span class="comment">justo</span>. <span class="comment">Donec</span> <span class="comment">venenat"</span> <span class="literal">+</span>
+          <span class="comment">"is</span> <span class="comment">nibh</span> <span class="comment">tellus</span>, <span class="comment">non</span> <span class="comment">rutrum</span> <span class="comment">lacus</span> <span class="comment">consequat</span> <span class="comment">eu</span>. <span class="comment">Curabitur</span> <span class="comment">non</span> <span class="comment">ar"</span> <span class="literal">+</span>
+          <span class="comment">"cu</span> <span class="comment">sit</span> <span class="comment">amet</span> <span class="comment">leo</span> <span class="comment">tempor</span> <span class="comment">suscipit</span> <span class="comment">vel</span> <span class="comment">vel</span> <span class="comment">purus</span>. <span class="comment">Cras</span> <span class="comment">pulvinar</span> <span class="comment">so"</span> <span class="literal">+</span>
+          <span class="comment">"dales</span> <span class="comment">justo</span>, <span class="comment">ac</span> <span class="comment">porttitor</span> <span class="comment">dolor</span> <span class="comment">consectetur</span> <span class="comment">sit</span> <span class="comment">amet</span>. <span class="comment">Ut</span> <span class="comment">auctor"</span> <span class="literal">+</span>
+          <span class="comment">"</span> <span class="comment">arcu</span> <span class="comment">sed</span> <span class="comment">imperdiet</span> <span class="comment">porta</span>. <span class="comment">Proin</span> <span class="comment">suscipit</span> <span class="comment">ante</span> <span class="comment">vel</span> <span class="comment">lacinia</span> <span class="comment">orna"</span> <span class="literal">+</span>
+          <span class="comment">"re</span>. <span class="comment">Integer</span> <span class="comment">mattis</span> <span class="comment">est</span> <span class="comment">et</span> <span class="comment">quam</span> <span class="comment">cursus</span>, <span class="comment">et</span> <span class="comment">commodo</span> <span class="comment">sapien</span> <span class="comment">ultric"</span> <span class="literal">+</span>
+          <span class="comment">"es</span>.&lt;<span class="comment">/p</span>&gt;<span class="comment">"</span>,
+  <span class="comment">"post_picture":</span> <span class="comment">"data:image/png;base64</span>,<span class="comment">iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYA"</span> <span class="literal">+</span>
+                <span class="comment">"AACNbyblAAAAHElEQVQI12P4</code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-3">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-3">#</a>
+        </div>
+      <p>8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4O" +</p>
+      </td>
+      <td class="code">
+      <pre><code >                <span class="string">"HwAAAABJRU5ErkJggg=="</span>
+}<span class="comment">;</span>
+
+var FAKE_COMMENTS = [
+  { <span class="string">"id"</span>:<span class="number">1</span>,<span class="string">"commenter"</span>:<span class="string">"Huey"</span>,<span class="string">"body"</span>:<span class="string">"Huey says something."</span>,<span class="string">"post_id"</span>:<span class="number">1</span> },
+  { <span class="string">"id"</span>:<span class="number">2</span>,<span class="string">"commenter"</span>:<span class="string">"Dewey"</span>,<span class="string">"body"</span>:<span class="string">"Dewey says something."</span>,<span class="string">"post_id"</span>:<span class="number">1</span> },
+  { <span class="string">"id"</span>:<span class="number">3</span>,<span class="string">"commenter"</span>:<span class="string">"Louie"</span>,<span class="string">"body"</span>:<span class="string">"Louie says something."</span>,<span class="string">"post_id"</span>:<span class="number">1</span> },
+  { <span class="string">"id"</span>:<span class="number">4</span>,<span class="string">"commenter"</span>:<span class="string">"John"</span>,<span class="string">"body"</span>:<span class="string">"John says something."</span>,<span class="string">"post_id"</span>:<span class="number">1</span> },
+  { <span class="string">"id"</span>:<span class="number">5</span>,<span class="string">"commenter"</span>:<span class="string">"Jimmy"</span>,<span class="string">"body"</span>:<span class="string">"Jimmy says something."</span>,<span class="string">"post_id"</span>:<span class="number">1</span> },
+]<span class="comment">;</span>
+
+</code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-4">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-4">#</a>
+        </div>
+      <p>Views are self descriptives. We don't use any parameter yet but this will change
+once model.js is implemented.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+<span class="function"><span class="keyword">function</span> <span class="title">postListView</span><span class="params">(section, parameters)</span> {</span>
+
+  buildList();
+  buildPagination();
+  installNavigation();
+
+  <span class="function"><span class="keyword">function</span> <span class="title">buildList</span><span class="params">()</span> {</span>
+    var entryTemplate = templates<span class="matrix">[<span class="string">'post-list'</span>].</span>entry;
+    var entries = <span class="transposed_variable">entryTemplate.</span>render(<span class="transposed_variable">FAKE_POST_LIST.</span>entries);
+    var postList = <span class="transposed_variable">document.</span>querySelector(<span class="string">'#post-list ol.post-list'</span>);
+    <span class="transposed_variable">postList.</span>innerHTML = <span class="string">''</span>;
+    <span class="transposed_variable">postList.</span>appendChild(entries);
+  }
+
+  <span class="function"><span class="keyword">function</span> <span class="title">buildPagination</span><span class="params">()</span> {</span>
+    var currentPage = <span class="transposed_variable">FAKE_POST_LIST.</span>page;
+    var perPage = <span class="transposed_variable">FAKE_POST_LIST.</span>per_page;
+    var totalEntries = <span class="transposed_variable">FAKE_POST_LIST.</span>total_entries;
+    var lastPage = <span class="transposed_variable">Math.</span><span class="built_in">ceil</span>(totalEntries / perPage);
+
+    var previousTemplate = <span class="transposed_variable">templates.</span><span class="transposed_variable">pagination.</span>previous;
+    var nextTemplate = <span class="transposed_variable">templates.</span><span class="transposed_variable">pagination.</span>next;
+    var currentTemplate = <span class="transposed_variable">templates.</span><span class="transposed_variable">pagination.</span>current;
+    var pageTemplate = <span class="transposed_variable">templates.</span><span class="transposed_variable">pagination.</span>page;
+
+    var paginationContainer = <span class="transposed_variable">document.</span>getElementsByClassName(<span class="string">'pagination'</span>)<span class="matrix">[<span class="number">0</span>]</span>;
+    <span class="transposed_variable">paginationContainer.</span>innerHTML = <span class="string">''</span>;
+    <span class="keyword">if</span> (currentPage &gt; <span class="number">1</span>) <span class="cell">{
+      paginationContainer.appendChild(previousTemplate.render(currentPage - <span class="number">1</span>));
+    }</span>
+    <span class="keyword">for</span> (var <span class="built_in">i</span> = <span class="number">1</span>; <span class="built_in">i</span> &lt;= lastPage; <span class="built_in">i</span>++) <span class="cell">{
+      paginationContainer.appendChild(i === currentPage ?
+                                      currentTemplate.render(currentPage) :
+                                      pageTemplate.render(i));
+    }</span>
+    <span class="keyword">if</span> (currentPage &lt; lastPage) <span class="cell">{
+      paginationContainer.appendChild(nextTemplate.render(currentPage + <span class="number">1</span>));
+    }</span>
+  }
+}
+
+</code></pre>
+      </td>
+    </tr>
+    
+    
+    <tr id="section-5">
+      <td class="docs">
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-5">#</a>
+        </div>
+      <p>Notice the repeated patterns along views and try to imagine how to reduce this
+repetition. You will refactor this code soon.</p>
+      </td>
+      <td class="code">
+      <pre><code >
+<span class="function"><span class="keyword">function</span> <span class="title">showPostView</span><span class="params">(section, parameters, postId)</span> {</span>
+  buildTitle();
+  buildComments();
+  buildPost();
+
+  <span class="function"><span class="keyword">function</span> <span class="title">buildTitle</span><span class="params">()</span> {</span>
+    var subtitleTemplate = templates<span class="matrix">[<span class="string">'show-post'</span>].</span>title;
+    var subtitleContainer = <span class="transposed_variable">document.</span>querySelector(<span class="string">'header div'</span>);
+    <span class="transposed_variable">subtitleContainer.</span>innerHTML = <span class="string">''</span>;
+    <span class="transposed_variable">subtitleContainer.</span>appendChild(<span class="transposed_variable">subtitleTemplate.</span>render(FAKE_POST));
+  }
+
+  <span class="function"><span class="keyword">function</span> <span class="title">buildComments</span><span class="params">()</span> {</span>
+    var commentTemplate = templates<span class="matrix">[<span class="string">'show-post'</span>].</span>comment;
+    var commentContainer = <span class="transposed_variable">document.</span>querySelector(<span class="string">'aside div'</span>);
+    <span class="transposed_variable">commentContainer.</span>innerHTML = <span class="string">''</span>;
+    <span class="transposed_variable">commentContainer.</span>appendChild(<span class="transposed_variable">commentTemplate.</span>render(FAKE_COMMENTS));
+  }
+
+  <span class="function"><span class="keyword">function</span> <span class="title">buildPost</span><span class="params">()</span> {</span>
+    var postTemplate = templates<span class="matrix">[<span class="string">'show-post'</span>].</span>post;
+    var postContainer = <span class="transposed_variable">document.</span>querySelector(<span class="string">'#show-post div'</span>);
+    <span class="transposed_variable">postContainer.</span>innerHTML = <span class="string">''</span>;
+    <span class="transposed_variable">postContainer.</span>appendChild(<span class="transposed_variable">postTemplate.</span>render(FAKE_POST));
+  }
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">editPostView</span><span class="params">(section, parameters, postId)</span> {</span>
+  var formTemplate = templates<span class="matrix">[<span class="string">'post-form'</span>]</span>;
+  var formContainer = <span class="transposed_variable">document.</span>querySelector(<span class="string">'#edit-post div'</span>);
+  <span class="transposed_variable">formContainer.</span>innerHTML = <span class="string">''</span>;
+  <span class="transposed_variable">formContainer.</span>appendChild(<span class="transposed_variable">formTemplate.</span>render(FAKE_POST));
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">newPostView</span><span class="params">()</span> {</span>
+  var emptyPost = <span class="cell">{ title: <span class="string">''</span>, text: <span class="string">''</span>, post_picture: <span class="string">''</span> }</span>;
+  var formTemplate = templates<span class="matrix">[<span class="string">'post-form'</span>]</span>;
+  var formContainer = <span class="transposed_variable">document.</span>querySelector(<span class="string">'#new-post div'</span>);
+  <span class="transposed_variable">formContainer.</span>innerHTML = <span class="string">''</span>;
+  <span class="transposed_variable">formContainer.</span>appendChild(<span class="transposed_variable">formTemplate.</span>render(emptyPost));
+}
+</code></pre>
+      </td>
+    </tr>
+    
+  </table>
+</div>
+</body>
+</html>
+
+
+

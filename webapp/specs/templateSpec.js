@@ -28,7 +28,8 @@ describe('The template library', function () {
     describe('the `render()` method', function () {
 
       it('accepts an object and return a document fragment with a copy of ' +
-      'the reference filled with object values.', function () {
+      'the reference replacing `{{ key }}` substrings with the object values ' +
+      'for those keys.', function () {
         var reference = fakeDocument.children[0];
         var template = new Template(reference);
         var object = { title: 'Test title', id: 1 };
