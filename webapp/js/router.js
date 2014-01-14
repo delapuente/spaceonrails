@@ -8,9 +8,9 @@ mechanisms; here we use a simple and didactical one to provide several
 examples of advanced JavaScript uses.
 
 Our proposal is to split our single-page application into several
-_navigation sections_, each identified by the custom attribute 
+_navigation sections_, each identified by the custom attribute
 `data-navigation-section`. When detecting a route, the application will move
-to that section by hidding the current one and showing the new one. 
+to that section by hidding the current one and showing the new one.
 */
 
 /*!
@@ -18,14 +18,14 @@ The code
 --------
 
 The complete list of all navigation sections.
-*/ 
+*/
 var NAVIGATION_SECTIONS = ['post-list', 'show-post', 'edit-post', 'new-post'];
 
 /*!
 An object with pairs of **pattern** and **action**.
 
 Each **pattern** is a [regular expression](https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions)
-that will be matched against the path of the URL. We use parenthesis to 
+that will be matched against the path of the URL. We use parenthesis to
 indicate parts of the URL to be remembered and passed to the initialization
 callback.
 
@@ -35,11 +35,11 @@ the new one in addition to call the initializer to, for instance, populate
 the section.
 */
 var ROUTES = {
-  '/$':                  goTo('post-list', fakeViewInitializer),
-  '/posts$':             goTo('post-list', fakeViewInitializer),
-  '/posts/(\\d+)$':      goTo('show-post', fakeViewInitializer),
-  '/posts/(\\d+)/edit$': goTo('edit-post', fakeViewInitializer),
-  '/posts/new$':         goTo('new-post', fakeViewInitializer)
+  '/$':                  goTo('post-list', postListView),
+  '/posts$':             goTo('post-list', postListView),
+  '/posts/(\\d+)$':      goTo('show-post', showPostView),
+  '/posts/(\\d+)/edit$': goTo('edit-post', editPostView),
+  '/posts/new$':         goTo('new-post', newPostView)
 };
 
 /*!
@@ -70,7 +70,7 @@ we call `goTo()`, a new namespace is created to hold parameters and variables
 and a new `_doNavigation()` function is created pointing to this new namespace.
 
 This way, back in the `ROUTES` object, we call `goTo()` once per URL to
-build new `_doNavigation()` functions bound to each section. 
+build new `_doNavigation()` functions bound to each section.
 */
 function goTo(sectionName, initializer) {
   'use strict'
@@ -95,7 +95,7 @@ function goTo(sectionName, initializer) {
 A clean code reccommendation is to start with running code as soon as possible
 and write dependencies just below. This way you don't read a lot of code pieces
 you don't know how they interact but just the working piece of code. It is your
-choice if I want to go deeper or not. 
+choice if I want to go deeper or not.
 */
 startRouter();
 
@@ -116,12 +116,12 @@ function startRouter() {
   If not, [wait for DOM to be completely loaded](https://developer.mozilla.org/en-US/docs/Web/Reference/Events/DOMContentLoaded).
   */
   if (document.readyState === 'interactive') {
-    installRouterAndNavigate();  
+    installRouterAndNavigate();
   }
   else {
     document.addEventListener('DOMContentLoaded', installRouterAndNavigate);
   }
-  
+
   /*!
   As you can see, functions can be nested inside functions. Here we use an
   inner function to reduce code repetition.
@@ -135,7 +135,7 @@ function startRouter() {
 
 /*!
 We are taking advantage of normal link elements, `<a>` to control navigation by
-overwritting what to do when clicking on a link. 
+overwritting what to do when clicking on a link.
 */
 function installNavigation() {
   /*!
@@ -147,7 +147,7 @@ function installNavigation() {
   if (!window._currentLinks) {
     window._currentLinks = document.getElementsByTagName('a');
   }
-  
+
   /*!
   Given that indexing a list with negative indices result in `undefined` and no
   item of a live list can be a falsy, we use this `for` pattern to get each link
@@ -163,7 +163,7 @@ function doClientNavigation(evt) {
 
   /*!
   By calling `preventDefault()` we avoid the default action of the link which
-  is navigate to the `href` URL by performing a `GET` request to the server.  
+  is navigate to the `href` URL by performing a `GET` request to the server.
   */
   evt.preventDefault();
   evt.stopPropagation();
@@ -172,7 +172,7 @@ function doClientNavigation(evt) {
 
 function hideAllSections() {
   'use strict'
-  
+
   window.NAVIGATION_SECTIONS.forEach(function (sectionName) {
      hideSection(sectionName);
   });
@@ -219,7 +219,7 @@ function route(href) {
   var matching, path, parser = document.createElement('a');
   parser.href = href;
   path = parser.pathname;
-  
+
   /*!
   The loop pass through each pattern trying to find a match for the current
   path. If found, it call the routing action associated to that pattern passing
@@ -238,7 +238,7 @@ function parseGetParameters(href) {
   'use strict'
 
   /*!
-  Looking for the querystring of an URL is not hard. Just look for the substring 
+  Looking for the querystring of an URL is not hard. Just look for the substring
   following the `?` character until the end or until finding a `#` character.
   */
   var matching = href.match(/\?([^#]+)/);

@@ -4,12 +4,17 @@
 /*
  * THE LAYOUT
  * ==========
- * The big picture is presented here. The blog is split into two sections: 
+ * The big picture is presented here. The blog is split into two sections:
  * a main big left side and a thin sidebar on the right.
  */
 
 /* 100% height for body and html tags means the height of the viewport. */
-html, body { height: 100%; } 
+html, body { height: 100%; }
+
+/* Hide the templates */
+[data-template] {
+  display: none;
+}
 
 /* The main wrapper fill almost all the background leaving some space on the
 right for the aside column. */
@@ -43,7 +48,7 @@ right for the aside column. */
 /* The aside column fills the right space. */
 body > aside {
   float: right;
-  
+
   /* With this box model, setting the width to 20rem includes all the space
   to the border itself. */
   box-sizing: border-box;
@@ -61,7 +66,7 @@ footer {
 /*
  * SECTIONS
  * ========
- * Now focus on each former section and setup its content. Create as many 
+ * Now focus on each former section and setup its content. Create as many
  * sub-layouts as needed.
  */
 
@@ -103,7 +108,7 @@ footer {
   be prefixed by inset to create an inner shadow. */
   box-shadow: 0.5rem 0.5rem 0.5rem 0 rgba(0, 0, 0, 0.4);
 
-  /* Transformations are one of the most interesting CSS3 new features. 
+  /* Transformations are one of the most interesting CSS3 new features.
   Transformations happen after calculating the structure of the page and have
   a very high performance. Transformations can be combined writing them as
   a space-separated list.*/
@@ -121,7 +126,7 @@ footer {
   padding: 1rem;
   border: 4px solid;
   position: relative;
-  
+
   /* Border radius allow to make rounded corner for boxes. */
   border-radius: 1rem;
   box-shadow: 0 1rem 1.5rem 0.2rem rgba(0, 0, 0, 0.4);
@@ -157,7 +162,7 @@ form input[type="text"] {
   box-sizing: border-box;
   width: 100%;
   border-radius: 0.7rem;
-  padding: 0.5rem;  
+  padding: 0.5rem;
   border: none;
   outline: none;
 }
@@ -215,7 +220,7 @@ footer p img {
  * Put here all your pure decoraative elements and special effects.
  */
 
-/* How to make a triangle? 
+/* How to make a triangle?
  *  1- Use pseudoelements to not polute HTML.
  *  2- Remember to give some value (the empty string this case) to content
  *  3- Use a 0x0 box with border. The borders become 4 triangles.
@@ -233,7 +238,7 @@ footer p img {
 }
 
 #add-comment::after {
-  top: -1.7rem;  
+  top: -1.7rem;
 }
 
 a.icon {
@@ -247,7 +252,7 @@ a.icon {
   text-align: center;
   text-decoration: none;
   line-height: 1rem;
-  
+
   border: 1px solid;
 }
 
@@ -282,7 +287,7 @@ aside .comment {
   transform-origin: 100% 0%;
   transform: rotate(-5deg);
   transition: transform 400ms ease;
-  
+
   /* Making the cursor became a pointer when hover we are calling for an action
   on these elements.*/
   cursor: pointer;
@@ -296,7 +301,7 @@ aside .comment:focus {
   transform: scale(1.5) rotate(0);
   outline: none;
   z-index: 21; /* As the natural z ordering puts later lower elements in the
-                HTML above the higher ones, raise the z-index to avoid the 
+                HTML above the higher ones, raise the z-index to avoid the
                 focused comment to be clipped by the lower ones. */
 }
 
@@ -326,7 +331,7 @@ html {
 #wrapper > header h1 {
   font-size: 3rem;
   text-shadow: 1px 1px 2px black;
-  
+
   background-color: #c52f24;
 }
 
@@ -365,7 +370,7 @@ html {
 
 #add-comment {
   color: #eee;
-  
+
   background-color: #333;
   border-color: white;
 }
@@ -424,7 +429,7 @@ in the colors. Specially in the gradient background. */
   /*
   A gradient is specified by a direction and color stops. A color stop
   is a pair of color and position. The color stop points where the color
-  turns to the one specified completely. Until this point, the color of 
+  turns to the one specified completely. Until this point, the color of
   the previous stop was interpolated.
   */
   background:

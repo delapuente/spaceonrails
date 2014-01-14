@@ -38,7 +38,7 @@ class PostsController < ApplicationController
       format.json { render json: {
         :page => @posts.current_page,
         :per_page => @posts.per_page,
-        :total => @posts.total_entries,
+        :total_entries => @posts.total_entries,
         :entries => @posts
       }, methods: [:post_picture] }
     end
