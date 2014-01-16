@@ -84,23 +84,29 @@ Views are self descriptives. We don't use any parameter yet but this will change
 once model.js is implemented.
 */
 function postListView(section, parameters) {
+  'use strict'
 
-  buildList();
-  buildPagination();
-  installNavigation();
+  var list;
+  model.getPostList(parameters.page, function (err, receivedList) {
+    list = receivedList;
+
+    buildList();
+    buildPagination();
+    updateNavigation();
+  });
 
   function buildList() {
     var entryTemplate = templates['post-list'].entry;
-    var entries = entryTemplate.render(FAKE_POST_LIST.entries);
+    var entries = entryTemplate.render(list.entries);
     var postList = document.querySelector('#post-list ol.post-list');
     postList.innerHTML = '';
     postList.appendChild(entries);
   }
 
   function buildPagination() {
-    var currentPage = FAKE_POST_LIST.page;
-    var perPage = FAKE_POST_LIST.per_page;
-    var totalEntries = FAKE_POST_LIST.total_entries;
+    var currentPage = list.page;
+    var perPage = list.per_page;
+    var totalEntries = list.total_entries;
     var lastPage = Math.ceil(totalEntries / perPage);
 
     var previousTemplate = templates.pagination.previous;
@@ -129,37 +135,54 @@ Notice the repeated patterns along views and try to imagine how to reduce this
 repetition. You will refactor this code soon.
 */
 function showPostView(section, parameters, postId) {
-  buildTitle();
-  buildComments();
-  buildPost();
+
+  var post, comments;
+  model.getPost(postId, function (err, receivedPost) {
+    post = receivedPost;
+
+    buildTitle();
+    buildPost();
+    updateNavigation();
+  });
+
+  model.getComments(postId, function (err, receivedComments) {
+    comments = receivedComments;
+
+    buildComments();
+  });
 
   function buildTitle() {
     var subtitleTemplate = templates['show-post'].title;
     var subtitleContainer = document.querySelector('header div');
     subtitleContainer.innerHTML = '';
-    subtitleContainer.appendChild(subtitleTemplate.render(FAKE_POST));
+    subtitleContainer.appendChild(subtitleTemplate.render(post));
   }
 
   function buildComments() {
     var commentTemplate = templates['show-post'].comment;
     var commentContainer = document.querySelector('aside div');
     commentContainer.innerHTML = '';
-    commentContainer.appendChild(commentTemplate.render(FAKE_COMMENTS));
+    commentContainer.appendChild(commentTemplate.render(comments));
   }
 
   function buildPost() {
     var postTemplate = templates['show-post'].post;
     var postContainer = document.querySelector('#show-post div');
     postContainer.innerHTML = '';
-    postContainer.appendChild(postTemplate.render(FAKE_POST));
+    postContainer.appendChild(postTemplate.render(post));
   }
 }
 
 function editPostView(section, parameters, postId) {
-  var formTemplate = templates['post-form'];
-  var formContainer = document.querySelector('#edit-post div');
-  formContainer.innerHTML = '';
-  formContainer.appendChild(formTemplate.render(FAKE_POST));
+  model.getPost(postId, function (err, receivedPost) {
+    var post = receivedPost;
+
+    var formTemplate = templates['post-form'];
+    var formContainer = document.querySelector('#edit-post div');
+    formContainer.innerHTML = '';
+    formContainer.appendChild(formTemplate.render(post));
+    updateNavigation();
+  });
 }
 
 function newPostView() {

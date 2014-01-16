@@ -22,11 +22,23 @@ class PostsController < ApplicationController
     end
   end
 
+  def make_absolute(url)
+
+  end
+
   def show
     @post = Post.find(params[:id])
     respond_to do |format|
       format.html
-      format.json { render json: @post }
+      format.json {
+        host = "#{request.protocol}#{request.host}:#{request.port}"
+        render json: {
+          :id => @post.id,
+          :title => @post.title,
+          :text => @post.text,
+          :post_picture => "#{host}#{@post.post_picture.url}"
+        }
+      }
     end
   end
 

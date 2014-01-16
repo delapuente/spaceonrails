@@ -35,8 +35,11 @@ end
 # Easy plugin for pagination
 gem 'will_paginate', '~> 3.0.5'
 
-# easy plugin for attachments
+# Easy plugin for attachments
 gem 'paperclip', '~> 3.5'
+
+# Easy plugin for CORS
+gem 'rack-cors', :require => 'rack/cors'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.1.2'

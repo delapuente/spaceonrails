@@ -127,7 +127,7 @@ function startRouter() {
   inner function to reduce code repetition.
   */
   function installRouterAndNavigate() {
-    installNavigation();
+    updateNavigation();
     hideAllSections();
     route(window.location.pathname);
   }
@@ -137,7 +137,7 @@ function startRouter() {
 We are taking advantage of normal link elements, `<a>` to control navigation by
 overwritting what to do when clicking on a link.
 */
-function installNavigation() {
+function updateNavigation() {
   /*!
   The list returned by `getElementsByTagName()` is what JS call a
   __live list__. A live list does not need to be updated any more because it
@@ -154,7 +154,9 @@ function installNavigation() {
   element and overwrite its behavior when clicked.
   */
   for (var l = _currentLinks.length - 1, a; a = _currentLinks[l]; l--) {
-    a.addEventListener('click', doClientNavigation);
+    if (a.dataset.hasOwnProperty('nav')) {
+      a.addEventListener('click', doClientNavigation);
+    }
   }
 }
 
