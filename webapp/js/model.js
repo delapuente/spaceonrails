@@ -93,7 +93,7 @@ The code
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
         var err = xhr.status < 200 || xhr.status > 299 ? xhr.status : null;
-        callback(err, xhr.response);
+        callback && callback(err, xhr.response);
       }
     };
     xhr.onerror = function () {

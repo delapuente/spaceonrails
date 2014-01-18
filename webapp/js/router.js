@@ -29,17 +29,17 @@ that will be matched against the path of the URL. We use parenthesis to
 indicate parts of the URL to be remembered and passed to the initialization
 callback.
 
-**Actions** are functions. Here we call the _function factory_ `goTo()`which
+**Actions** are functions. Here we call the _function factory_ `showSection()`which
 returns another function in charge of hiding the current section and showing
 the new one in addition to call the initializer to, for instance, populate
 the section.
 */
 var ROUTES = {
-  '/$':                  goTo('post-list', postListView),
-  '/posts$':             goTo('post-list', postListView),
-  '/posts/(\\d+)$':      goTo('show-post', showPostView),
-  '/posts/(\\d+)/edit$': goTo('edit-post', editPostView),
-  '/posts/new$':         goTo('new-post', newPostView)
+  '/$':                  changeToSection('post-list', postListView),
+  '/posts$':             changeToSection('post-list', postListView),
+  '/posts/(\\d+)$':      changeToSection('show-post', showPostView),
+  '/posts/(\\d+)/edit$': changeToSection('edit-post', editPostView),
+  '/posts/new$':         changeToSection('new-post', newPostView)
 };
 
 /*!
@@ -66,13 +66,14 @@ var _currentLinks, _currentSection;
 /*!
 **Function factories** like this are functions which return other functions.
 The inner function can reach the variables of the parent function. Each time
-we call `goTo()`, a new namespace is created to hold parameters and variables
-and a new `_doNavigation()` function is created pointing to this new namespace.
+we call `changeToSection()`, a new namespace is created to hold parameters and
+variables and a new `_doNavigation()` function is created pointing to this new
+namespace.
 
-This way, back in the `ROUTES` object, we call `goTo()` once per URL to
-build new `_doNavigation()` functions bound to each section.
+This way, back in the `ROUTES` object, we call `changeToSection()` once per URL
+to build new `_doNavigation()` functions bound to each section.
 */
-function goTo(sectionName, initializer) {
+function changeToSection(sectionName, initializer) {
   'use strict'
 
   return function _doNavigation() {
@@ -129,7 +130,7 @@ function startRouter() {
   function installRouterAndNavigate() {
     updateNavigation();
     hideAllSections();
-    route(window.location.pathname);
+    navigateTo(window.location.pathname);
   }
 }
 
@@ -154,7 +155,7 @@ function updateNavigation() {
   element and overwrite its behavior when clicked.
   */
   for (var l = _currentLinks.length - 1, a; a = _currentLinks[l]; l--) {
-    if (a.dataset.hasOwnProperty('nav')) {
+    if (!a.dataset.hasOwnProperty('method')) {
       a.addEventListener('click', doClientNavigation);
     }
   }
@@ -169,7 +170,7 @@ function doClientNavigation(evt) {
   */
   evt.preventDefault();
   evt.stopPropagation();
-  route(evt.target.getAttribute('href'));
+  navigateTo(evt.target.getAttribute('href'));
 }
 
 function hideAllSections() {
@@ -208,7 +209,7 @@ function setSectionVisibility(sectionName, visibility) {
   }
 }
 
-function route(href) {
+function navigateTo(href) {
   'use strict'
 
   var routes = window.ROUTES;

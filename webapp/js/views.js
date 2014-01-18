@@ -26,60 +26,6 @@ function gatherTemplates() {
 }
 
 /*!
-Here there are some fake objects emulating a post list, a single post and
-some comments.
-*/
-var FAKE_POST_LIST = {
-  "page": 2,
-  "per_page": 5,
-  "total_entries": 15,
-  "entries": [
-    { "id":  6, "title": "Sample post 6" },
-    { "id":  7, "title": "Sample post 7" },
-    { "id":  8, "title": "Sample post 8" },
-    { "id":  9, "title": "Sample post 9" },
-    { "id": 10, "title": "Sample post 10" }
-  ]
-};
-
-var FAKE_POST = {
-  "id": 1,
-  "title": "A sample post",
-  "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut " +
-          "risus leo, tristique vitae ultricies vel, eleifend fermentum au" +
-          "gue. Mauris a nunc aliquet neque laoreet bibendum eu mollis eni" +
-          "m. Vivamus semper tempus ante, vel suscipit orci. Proin non fel" +
-          "is in magna tempus commodo. Nullam condimentum tincidunt nulla " +
-          "elementum aliquam. Etiam ligula erat, ultrices vitae accumsan e" +
-          "get, tincidunt luctus felis. Sed eget augue convallis, laoreet " +
-          "eros vel, sodales ante. Sed vulputate adipiscing magna, et laci" +
-          "nia leo posuere in. In at justo urna. Vestibulum molestie, mi s" +
-          "ed volutpat pulvinar, libero dolor blandit est, non fringilla m" +
-          "etus lacus sed mi. Ut felis odio, blandit sed dolor id, tempus " +
-          "gravida ante. Pellentesque ultrices, massa id hendrerit placera" +
-          "t, urna orci aliquet nulla, nec consectetur odio sem vel justo." +
-          "</p><p>Curabitur a ipsum lobortis, suscipit eros at, tempor sap" +
-          "ien. Cras sed semper eros, eu pellentesque justo. Donec venenat" +
-          "is nibh tellus, non rutrum lacus consequat eu. Curabitur non ar" +
-          "cu sit amet leo tempor suscipit vel vel purus. Cras pulvinar so" +
-          "dales justo, ac porttitor dolor consectetur sit amet. Ut auctor" +
-          " arcu sed imperdiet porta. Proin suscipit ante vel lacinia orna" +
-          "re. Integer mattis est et quam cursus, et commodo sapien ultric" +
-          "es.</p>",
-  "post_picture": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYA" +
-                "AACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4O" +
-                "HwAAAABJRU5ErkJggg=="
-};
-
-var FAKE_COMMENTS = [
-  { "id":1,"commenter":"Huey","body":"Huey says something.","post_id":1 },
-  { "id":2,"commenter":"Dewey","body":"Dewey says something.","post_id":1 },
-  { "id":3,"commenter":"Louie","body":"Louie says something.","post_id":1 },
-  { "id":4,"commenter":"John","body":"John says something.","post_id":1 },
-  { "id":5,"commenter":"Jimmy","body":"Jimmy says something.","post_id":1 },
-];
-
-/*!
 Views are self descriptives. We don't use any parameter yet but this will change
 once model.js is implemented.
 */
@@ -93,6 +39,7 @@ function postListView(section, parameters) {
     buildList();
     buildPagination();
     updateNavigation();
+    addDeletions();
   });
 
   function buildList() {
@@ -128,6 +75,28 @@ function postListView(section, parameters) {
       paginationContainer.appendChild(nextTemplate.render(currentPage + 1));
     }
   }
+
+  function addDeletions() {
+    var deleteLinks =
+      document.querySelectorAll('#post-list a[data-method="delete"]');
+    for (var link, i = deleteLinks.length - 1; link = deleteLinks[i]; i--) {
+      link.addEventListener('click', onDeletePost);
+    }
+  }
+
+  function onDeletePost(evt) {
+    evt.preventDefault();
+    if (!confirm('Are you sure you want to delete this post?')) { return; }
+
+    var link = evt.target;
+    var matching = link.getAttribute('href').match(/\/posts\/(\d+)/);
+    var postId = matching ? matching[1] : undefined;
+    if (postId) {
+      model.deletePost(postId, function onceDeleted(err) {
+        navigateTo('/');
+      });
+    }
+  }
 }
 
 /*!
@@ -136,40 +105,71 @@ repetition. You will refactor this code soon.
 */
 function showPostView(section, parameters, postId) {
 
-  var post, comments;
-  model.getPost(postId, function (err, receivedPost) {
-    post = receivedPost;
+  /*!
+  These two operations are asynchronous. We ask for a post and for its comments
+  in two different and parallel tasks and they could success at different times
+  in any order.
+  */
+  buildPostSections();
+  buildCommentsSections();
 
-    buildTitle();
-    buildPost();
-    updateNavigation();
-  });
+  function buildPostSections() {
+    model.getPost(postId, function (err, receivedPost) {
+      buildTitle(receivedPost);
+      buildPost(receivedPost);
+    });
+  }
 
-  model.getComments(postId, function (err, receivedComments) {
-    comments = receivedComments;
+  function buildCommentsSections() {
+    model.getComments(postId, function (err, receivedComments) {
+      buildComments(receivedComments);
+      addCommentDeletions();
+    });
+  }
 
-    buildComments();
-  });
-
-  function buildTitle() {
+  function buildTitle(post) {
     var subtitleTemplate = templates['show-post'].title;
     var subtitleContainer = document.querySelector('header div');
     subtitleContainer.innerHTML = '';
     subtitleContainer.appendChild(subtitleTemplate.render(post));
   }
 
-  function buildComments() {
+  function buildPost(post) {
+    var postTemplate = templates['show-post'].post;
+    var postContainer = document.querySelector('#show-post div');
+    postContainer.innerHTML = '';
+    postContainer.appendChild(postTemplate.render(post));
+  }
+
+  function buildComments(comments) {
     var commentTemplate = templates['show-post'].comment;
     var commentContainer = document.querySelector('aside div');
     commentContainer.innerHTML = '';
     commentContainer.appendChild(commentTemplate.render(comments));
   }
 
-  function buildPost() {
-    var postTemplate = templates['show-post'].post;
-    var postContainer = document.querySelector('#show-post div');
-    postContainer.innerHTML = '';
-    postContainer.appendChild(postTemplate.render(post));
+  function addCommentDeletions() {
+    var deleteLinks =
+      document.querySelectorAll('aside a[data-method="delete"]');
+    for (var link, i = deleteLinks.length - 1; link = deleteLinks[i]; i--) {
+      link.addEventListener('click', onDeletePost);
+    }
+  }
+
+  function onDeletePost(evt) {
+    evt.preventDefault();
+    if (!confirm('Are you sure you want to delete this comment?')) { return; }
+
+    var link = evt.target;
+    var matching =
+      link.getAttribute('href').match(/\/posts\/(\d+)\/comments\/(\d+)/);
+    var postId = matching ? matching[1] : undefined;
+    var commentId = matching ? matching[2] : undefined;
+    if (postId && commentId) {
+      model.deleteComment(postId, commentId, function onceDeleted(err) {
+        buildCommentsSections();
+      });
+    }
   }
 }
 

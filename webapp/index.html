@@ -41,7 +41,8 @@ of the HTML standard. -->
           <p>{{ body }}</p>
 
           <menu>
-            <a class="icon" data-method="delete" href="/comments/{{ id }}">❌</a>
+            <a class="icon" data-method="delete"
+            href="/posts/{{ post_id }}/comments/{{ id }}">❌</a>
           </menu>
         </section>
       </div>
@@ -54,7 +55,7 @@ of the HTML standard. -->
     <!-- The element <header> is introduced in HTML5 to keep introductory
     content for the current section. -->
     <header>
-      <h1><a data-nav href="/">Space on Rails!</a></h1>
+      <h1><a href="/">Space on Rails!</a></h1>
       <!-- The hidden attribute indicates the element is not relevant.
       The default presentation don't show the element but it could be redefined
       by using CSS. -->
@@ -71,31 +72,31 @@ of the HTML standard. -->
 
       <!-- The post-list section shows a paginated list with the posts. -->
       <section id="post-list" data-navigation-section="post-list" >
-        <a data-nav class="button" href="/posts/new">New post</a>
+        <a class="button" href="/posts/new">New post</a>
         <ol class="post-list">
           <li data-template="post-list.entry">
             <span class="title"><a data-nav
             href="/posts/{{ id }}">{{ title }}</a></span>
             <menu>
-              <a data-nav class="icon" href="/posts/{{ id }}/edit">✎</a>
+              <a class="icon" href="/posts/{{ id }}/edit">✎</a>
               <a class="icon" data-method="delete" href="/posts/{{ id }}">❌</a>
            </menu>
           </li>
         </ol>
         <div class="pagination">
-          <a data-nav data-template="pagination.previous"
+          <a data-template="pagination.previous"
           href="/posts/?page={{}}">← Previous</a>
           <em data-template="pagination.current" class="current">{{}}</em>
-          <a data-nav data-template="pagination.page"
+          <a data-template="pagination.page"
           href="/posts/?page={{}}">{{}}</a>
-          <a data-nav data-template="pagination.next"
+          <a data-template="pagination.next"
           href="/posts/?page={{}}">Next →</a>
         </div>
       </section>
 
       <!-- The edit-post section shows a form to modify a post. -->
       <section id="edit-post" data-navigation-section="edit-post" hidden>
-        <nav><a data-nav class="button" href="/posts">Back</a></nav>
+        <nav><a class="button" href="/posts">Back</a></nav>
         <div>
           <form data-template="post-form">
             <p>
@@ -128,17 +129,17 @@ of the HTML standard. -->
 
       <!-- The new-post section shows a form to add a new post. -->
       <section id="new-post" data-navigation-section="new-post" hidden>
-        <nav><a data-nav class="button" href="/">Back</a></nav>
+        <nav><a class="button" href="/">Back</a></nav>
         <div></div>
       </section>
 
       <!-- The show-post section displays a post and its comments in the
       <aside> element. -->
       <section id="show-post" data-navigation-section="show-post" hidden>
-        <nav><a data-nav class="button" href="/">Back</a></nav>
+        <nav><a class="button" href="/">Back</a></nav>
         <div>
           <article data-template="show-post.post">
-            <menu><a data-nav class="icon"
+            <menu><a class="icon"
             href="/posts/{{ id }}/edit">✎</a></menu>
             <figure class="post-picture">
               <img src="{{ post_picture }}" />
