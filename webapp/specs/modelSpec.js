@@ -23,7 +23,7 @@ describe('The model proxy', function () {
 
       expect(request.requestHeaders['Accept']).toBe('application/json');
       expect(request.method).toBe('GET');
-      expect(request.url).toBe('localhost:3000/posts');
+      expect(request.url).toBe('http://localhost:3000/posts');
       expect(callback.calledOnce).toBe(true);
     });
 
@@ -34,7 +34,7 @@ describe('The model proxy', function () {
 
       expect(request.requestHeaders['Accept']).toBe('application/json');
       expect(request.method).toBe('GET');
-      expect(request.url).toBe('localhost:3000/posts?page=' + page);
+      expect(request.url).toBe('http://localhost:3000/posts?page=' + page);
       expect(callback.calledOnce).toBe(true);
     });
 
@@ -45,7 +45,7 @@ describe('The model proxy', function () {
 
       expect(request.requestHeaders['Accept']).toBe('application/json');
       expect(request.method).toBe('GET');
-      expect(request.url).toBe('localhost:3000/posts/' + id);
+      expect(request.url).toBe('http://localhost:3000/posts/' + id);
       expect(callback.calledOnce).toBe(true);
     });
 
@@ -55,7 +55,7 @@ describe('The model proxy', function () {
       request.respond(200, {}, '');
 
       expect(request.method).toBe('DELETE');
-      expect(request.url).toBe('localhost:3000/posts/' + id);
+      expect(request.url).toBe('http://localhost:3000/posts/' + id);
       expect(callback.calledOnce).toBe(true);
     });
 
@@ -67,7 +67,7 @@ describe('The model proxy', function () {
 
       expect(request.requestHeaders['Accept']).toBe('application/json');
       expect(request.method).toBe('PATCH');
-      expect(request.url).toBe('localhost:3000/posts/' + id);
+      expect(request.url).toBe('http://localhost:3000/posts/' + id);
       expect(request.requestBody).toBe(JSON.stringify(patch));
       expect(callback.calledOnce).toBe(true);
     });
@@ -80,7 +80,7 @@ describe('The model proxy', function () {
 
       expect(request.requestHeaders['Accept']).toBe('application/json');
       expect(request.method).toBe('POST');
-      expect(request.url).toBe('localhost:3000/posts');
+      expect(request.url).toBe('http://localhost:3000/posts');
       expect(request.requestBody).toBe(JSON.stringify(post));
       expect(callback.calledOnce).toBe(true);
     });
@@ -97,7 +97,7 @@ describe('The model proxy', function () {
 
       expect(request.requestHeaders['Accept']).toBe('application/json');
       expect(request.method).toBe('POST');
-      expect(request.url).toBe('localhost:3000/posts/' + id + '/comments');
+      expect(request.url).toBe('http://localhost:3000/posts/' + id + '/comments');
       expect(request.requestBody).toBe(JSON.stringify(comment));
       expect(callback.calledOnce).toBe(true);
     });
@@ -110,7 +110,7 @@ describe('The model proxy', function () {
 
       expect(request.requestHeaders['Accept']).toBe('application/json');
       expect(request.method).toBe('GET');
-      expect(request.url).toBe('localhost:3000/posts/' + id + '/comments');
+      expect(request.url).toBe('http://localhost:3000/posts/' + id + '/comments');
       expect(callback.calledOnce).toBe(true);
     });
 
@@ -123,7 +123,7 @@ describe('The model proxy', function () {
       expect(request.requestHeaders['Accept']).toBe('application/json');
       expect(request.method).toBe('DELETE');
       expect(request.url)
-        .toBe('localhost:3000/posts/' + postId + '/comments/' + id);
+        .toBe('http://localhost:3000/posts/' + postId + '/comments/' + id);
       expect(callback.calledOnce).toBe(true);
     });
 

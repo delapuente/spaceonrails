@@ -6,7 +6,8 @@ class CommentsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to post_path(@post) }
       format.json {
-        render :json => { :status => :created },
+        render :json => { :status => :created, :post_id => @post.id,
+                          :id => @comment.id },
                :status => :ok, :location => @comment
       }
     end

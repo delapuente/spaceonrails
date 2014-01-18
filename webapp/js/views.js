@@ -117,6 +117,8 @@ function showPostView(section, parameters, postId) {
     model.getPost(postId, function (err, receivedPost) {
       buildTitle(receivedPost);
       buildPost(receivedPost);
+      setupPostComments();
+      updateNavigation();
     });
   }
 
@@ -124,6 +126,18 @@ function showPostView(section, parameters, postId) {
     model.getComments(postId, function (err, receivedComments) {
       buildComments(receivedComments);
       addCommentDeletions();
+    });
+  }
+
+  function setupPostComments() {
+    var form = document.querySelector('#add-comment form');
+    form.addEventListener('submit', function onSubmit(evt) {
+      evt.preventDefault();
+
+      var payload = gatherFormFields(form);
+      model.newComment(postId, payload, function onceCreated(err) {
+        buildCommentsSections();
+      });
     });
   }
 
@@ -181,8 +195,21 @@ function editPostView(section, parameters, postId) {
     var formContainer = document.querySelector('#edit-post div');
     formContainer.innerHTML = '';
     formContainer.appendChild(formTemplate.render(post));
+    setupUpdatePost();
     updateNavigation();
   });
+
+  function setupUpdatePost() {
+    var form = document.querySelector('#edit-post form');
+    form.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+
+      var update = gatherFormFields(form);
+      model.updatePost(postId, update, function onceUpdated(err) {
+        navigateTo('/posts/' + postId);
+      });
+    });
+  }
 }
 
 function newPostView() {
@@ -191,4 +218,43 @@ function newPostView() {
   var formContainer = document.querySelector('#new-post div');
   formContainer.innerHTML = '';
   formContainer.appendChild(formTemplate.render(emptyPost));
+
+  setupCreatePost();
+
+  function setupCreatePost() {
+    var form = document.querySelector('#new-post form');
+    form.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+
+      var post = gatherFormFields(form);
+      model.newPost(post, function onceCreated(err, newPost) {
+        navigateTo('/posts/' + newPost.id);
+      });
+    });
+  }
+}
+
+function gatherFormFields(form) {
+  var result = {};
+  var elements = form.querySelectorAll('input, textarea');
+  for (var i = elements.length - 1, element; element = elements[i]; i--) {
+    if (element.name && element.type !== 'submit') {
+      putIn(result, element.name, element.value);
+    }
+  }
+
+  return result;
+
+  function putIn(target, path, object) {
+    var tokens = path.split('.');
+    var current = tokens[0];
+    var remainingPath = tokens.slice(1).join('.');
+    if (tokens.length === 1) {
+      target[current] = object;
+    }
+    else {
+      target[current] = target[current] || {};
+      putIn(target[current], remainingPath, object);
+    }
+  }
 }

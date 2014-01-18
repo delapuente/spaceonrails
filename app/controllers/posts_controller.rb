@@ -9,7 +9,7 @@ class PostsController < ApplicationController
       if @post.save
         format.html { redirect_to @post }
         format.json {
-          render :json => { :status => :created },
+          render :json => { :status => :created, :id => @post.id },
                  :status => :created, :location => @post
         }
       else
@@ -22,21 +22,21 @@ class PostsController < ApplicationController
     end
   end
 
-  def make_absolute(url)
-
-  end
-
   def show
     @post = Post.find(params[:id])
     respond_to do |format|
       format.html
       format.json {
-        host = "#{request.protocol}#{request.host}:#{request.port}"
+        complete_url = ''
+        unless @post.post_picture.url === ''
+          host = "#{request.protocol}#{request.host}:#{request.port}"
+          complete_url = "#{host}#{@post.post_picture.url}"
+        end
         render json: {
           :id => @post.id,
           :title => @post.title,
           :text => @post.text,
-          :post_picture => "#{host}#{@post.post_picture.url}"
+          :post_picture => complete_url
         }
       }
     end
