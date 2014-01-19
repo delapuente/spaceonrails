@@ -97,7 +97,8 @@ describe('The model proxy', function () {
 
       expect(request.requestHeaders['Accept']).toBe('application/json');
       expect(request.method).toBe('POST');
-      expect(request.url).toBe('http://localhost:3000/posts/' + id + '/comments');
+      expect(request.url)
+        .toBe('http://localhost:3000/posts/' + id + '/comments');
       expect(request.requestBody).toBe(JSON.stringify(comment));
       expect(callback.calledOnce).toBe(true);
     });
@@ -110,7 +111,8 @@ describe('The model proxy', function () {
 
       expect(request.requestHeaders['Accept']).toBe('application/json');
       expect(request.method).toBe('GET');
-      expect(request.url).toBe('http://localhost:3000/posts/' + id + '/comments');
+      expect(request.url)
+        .toBe('http://localhost:3000/posts/' + id + '/comments');
       expect(callback.calledOnce).toBe(true);
     });
 

@@ -3,10 +3,9 @@ Views
 =====
 
 Views are represented by functions triggered by the router when enabling a
-section. Basically, the duty of a view is to ask the model for data and use it
-to populate a template. Then place the template in the proper location.
+section. Basically, the duties of a view are to keep the synchronization
+between the model and the presentation.
 
-/*!
 The code
 --------
 
@@ -19,6 +18,9 @@ else {
   document.addEventListener('DOMContentLoaded', gatherTemplates);
 }
 
+/*!
+We accumulate all templates in the `template` library acting as a library.
+*/
 var templates;
 function gatherTemplates() {
   document.removeEventListener('DOMContentLoaded', gatherTemplates);
@@ -26,8 +28,8 @@ function gatherTemplates() {
 }
 
 /*!
-Views are self descriptives. We don't use any parameter yet but this will change
-once model.js is implemented.
+This view controls the paginated list of posts in the server. It gets the number
+of page in the `parameters.page` entry.
 */
 function postListView(section, parameters) {
   'use strict'
@@ -36,8 +38,17 @@ function postListView(section, parameters) {
   model.getPostList(parameters.page, function (err, receivedList) {
     list = receivedList;
 
+  /*!
+  Once the list of pages is received, the control is transferred to the several
+  helping functions to build the UI.
+  */
     buildList();
     buildPagination();
+  /*!
+  Now we update the navitation links to attach our customized navigation to
+  the new created links and finally we install the capability to delete
+  posts.
+  */
     updateNavigation();
     addDeletions();
   });
@@ -76,6 +87,11 @@ function postListView(section, parameters) {
     }
   }
 
+  /*!
+  Adding the delete capability consist in taking all the delete links and
+  attach a custom callback to intercept the navigation in the same way we
+  did to intercept navigation in the router.
+  */
   function addDeletions() {
     var deleteLinks =
       document.querySelectorAll('#post-list a[data-method="delete"]');
@@ -84,14 +100,33 @@ function postListView(section, parameters) {
     }
   }
 
+  /*!
+  It's quite important to prevent the default action in order to avoid
+  browser navigation.
+  */
   function onDeletePost(evt) {
     evt.preventDefault();
+  /*!
+  Methods such a `alert()` or `confirm()` are some of few examples of
+  synchronous JS functions. In the case of `confirm()`, the browser shows
+  a dialogue to the user with the text passed as parameter and two buttons
+  with `accept` and `cancel` values. If the user clicks `accept`, the function
+  evaluates to `true`.
+  */
     if (!confirm('Are you sure you want to delete this post?')) { return; }
 
+  /*!
+  We extract the `postId` from the `href` attribute with a simple regular
+  expression.
+  */
     var link = evt.target;
     var matching = link.getAttribute('href').match(/\/posts\/(\d+)/);
     var postId = matching ? matching[1] : undefined;
     if (postId) {
+  /*!
+  Finally, the view communicates with the model and issues a command to delete
+  the post and redirects the user to the page 1 using the router.
+  */
       model.deletePost(postId, function onceDeleted(err) {
         navigateTo('/');
       });
@@ -100,19 +135,21 @@ function postListView(section, parameters) {
 }
 
 /*!
-Notice the repeated patterns along views and try to imagine how to reduce this
-repetition. You will refactor this code soon.
+The view shows an entire post and its comments.
 */
 function showPostView(section, parameters, postId) {
 
   /*!
   These two operations are asynchronous. We ask for a post and for its comments
-  in two different and parallel tasks and they could success at different times
-  in any order.
+  in two different and [_parallel_](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest#Notes)
+  tasks and they could success at different times in any order.
   */
   buildPostSections();
   buildCommentsSections();
 
+  /*!
+  Once we rendered all the post, we can set up the form for posting comments.
+  */
   function buildPostSections() {
     model.getPost(postId, function (err, receivedPost) {
       buildTitle(receivedPost);
@@ -122,6 +159,10 @@ function showPostView(section, parameters, postId) {
     });
   }
 
+  /*!
+  The comment section shows only the list of all comments and sets up the
+  _deleting a comment_ functionality.
+  */
   function buildCommentsSections() {
     model.getComments(postId, function (err, receivedComments) {
       buildComments(receivedComments);
@@ -131,9 +172,17 @@ function showPostView(section, parameters, postId) {
 
   function setupPostComments() {
     var form = document.querySelector('#add-comment form');
+  /*!
+  We customize the action when the formulary is sent by preventing the real
+  navigation action and adding our custom request through the model.
+  */
     form.addEventListener('submit', function onSubmit(evt) {
       evt.preventDefault();
 
+  /*!
+  The heleper functon `gatherFormFields()` uses the special notation we
+  introduced in the view to build the automatically build the payload.
+  */
       var payload = gatherFormFields(form);
       model.newComment(postId, payload, function onceCreated(err) {
         buildCommentsSections();
@@ -162,6 +211,9 @@ function showPostView(section, parameters, postId) {
     commentContainer.appendChild(commentTemplate.render(comments));
   }
 
+  /*!
+  Very similar to delete a post.
+  */
   function addCommentDeletions() {
     var deleteLinks =
       document.querySelectorAll('aside a[data-method="delete"]');
@@ -181,12 +233,21 @@ function showPostView(section, parameters, postId) {
     var commentId = matching ? matching[2] : undefined;
     if (postId && commentId) {
       model.deleteComment(postId, commentId, function onceDeleted(err) {
+  /*!
+  This time, instead of navigating to some route we ask the view to rebuild
+  the comments' section in order to avoid asking for the post again.
+  */
         buildCommentsSections();
       });
     }
   }
 }
 
+/*!
+This view and the next one are very similar. The main difference is the edit
+one performs a query to the model to get the post an fill the form fields
+while the new version does not perform any additional request.
+*/
 function editPostView(section, parameters, postId) {
   model.getPost(postId, function (err, receivedPost) {
     var post = receivedPost;
@@ -234,6 +295,11 @@ function newPostView() {
   }
 }
 
+/*!
+The helper function gathers all the fields in the form and uses their names
+to build an object with the same structure. It uses the same function
+used for the templates to follow _dot notation_ and to allow nested fields.
+*/
 function gatherFormFields(form) {
   var result = {};
   var elements = form.querySelectorAll('input, textarea');
