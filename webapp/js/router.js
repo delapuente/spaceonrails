@@ -17,9 +17,7 @@ to that section by hidding the current one and showing the new one.
 The code
 --------
 
-The complete list of all navigation sections.
 */
-var NAVIGATION_SECTIONS = ['post-list', 'show-post', 'edit-post', 'new-post'];
 
 /*!
 An object with pairs of **pattern** and **action**.
@@ -29,17 +27,15 @@ that will be matched against the path of the URL. We use parenthesis to
 indicate parts of the URL to be remembered and passed to the initialization
 callback.
 
-**Actions** are functions. Here we call the _function factory_ `showSection()`which
-returns another function in charge of hiding the current section and showing
-the new one in addition to call the initializer to, for instance, populate
-the section.
+**Actions** are pairs of section and view function. The view function will be
+in charge of populate the section and add the extra functionallity.
 */
 var ROUTES = {
-  '/$':                  changeToSection('post-list', postListView),
-  '/posts$':             changeToSection('post-list', postListView),
-  '/posts/(\\d+)$':      changeToSection('show-post', showPostView),
-  '/posts/(\\d+)/edit$': changeToSection('edit-post', editPostView),
-  '/posts/new$':         changeToSection('new-post', newPostView)
+  '^/$':                   ['post-list', postListView],
+  '/posts/?$':             ['post-list', postListView],
+  '/posts/(\\d+)/?$':      ['show-post', showPostView],
+  '/posts/(\\d+)/edit/?$': ['edit-post', editPostView],
+  '/posts/new/?$':         ['new-post', newPostView]
 };
 
 /*!
@@ -48,49 +44,20 @@ actions such as fetching data from server and installing special handlers for
 specific actions. We are simulating this initialization now by simply printing
 the parameters in the console.
 */
-function fakeViewInitializer(section, getParameters) {
+function fakeViewInitializer(section, querystringParams) {
   'use strict'
 
-  var pathParameters = Array.prototype.slice.call(arguments, 2);
+  var capturedGroups = Array.prototype.slice.call(arguments, 2);
   console.log('Section:', section);
-  console.log('Get parameters:', JSON.stringify(getParameters));
-  console.log('Path parameters:', pathParameters + '');
+  console.log('Querystring parameters:', JSON.stringify(querystringParams));
+  console.log('Path parameters:', capturedGroups + '');
 }
 
 /*!
 We are not isolating the code right now so we mark the _private_ variables by
 prepending a dash (`_`) before the name. Just a naming convention.
 */
-var _currentLinks, _currentSection;
-
-/*!
-**Function factories** like this are functions which return other functions.
-The inner function can reach the variables of the parent function. Each time
-we call `changeToSection()`, a new namespace is created to hold parameters and
-variables and a new `_doNavigation()` function is created pointing to this new
-namespace.
-
-This way, back in the `ROUTES` object, we call `changeToSection()` once per URL
-to build new `_doNavigation()` functions bound to each section.
-*/
-function changeToSection(sectionName, initializer) {
-  'use strict'
-
-  return function _doNavigation() {
-  /*!
-  The special variable `arguments` hold each parameter passed to the function.
-  The `arguments` variable is not a common list so it can not be used as a
-  JS array. To convert it, [call the `slice()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice)
-  Array's method on the `arguments` object to perform a copy of the list into a
-  standard JS array.
-  */
-    var remainingArguments = Array.prototype.slice.call(arguments, 0);
-    hideSection(_currentSection);
-    _currentSection = sectionName;
-    showSection(sectionName);
-    initializer.apply(this, [sectionName].concat(remainingArguments));
-  };
-}
+var _currentLinks, _currentSection, _navigationSections;
 
 /*!
 A clean code reccommendation is to start with running code as soon as possible
@@ -124,11 +91,22 @@ function startRouter() {
   }
 
   /*!
+  As our history state is the URL (a very Webby approach), to show the proper
+  view we should only _client-navigate_ to that URL.
+  */
+  window.onpopstate = function (event) {
+    if (event.state) {
+      navigateTo(event.state);
+    }
+  };
+
+  /*!
   As you can see, functions can be nested inside functions. Here we use an
   inner function to reduce code repetition.
   */
   function installRouterAndNavigate() {
     updateNavigation();
+    autodiscoverSections();
     hideAllSections();
     navigateTo(window.location.pathname);
   }
@@ -139,6 +117,8 @@ We are taking advantage of normal link elements, `<a>` to control navigation by
 overwritting what to do when clicking on a link.
 */
 function updateNavigation() {
+  'use strict'
+
   /*!
   The list returned by `getElementsByTagName()` is what JS call a
   __live list__. A live list does not need to be updated any more because it
@@ -149,15 +129,35 @@ function updateNavigation() {
     window._currentLinks = document.getElementsByTagName('a');
   }
 
+  for (var a, i = 0, l = _currentLinks.length; i < l; i++) {
+    a = _currentLinks[i]
+    a.addEventListener('click', doClientNavigation);
+  }
+}
+
+/*!
+Fill the navigation sections found in the SPA. It uses an object to
+automatically avoid repetitions. You can extract the keys of an object
+by using `Object.keys()` method.
+*/
+function autodiscoverSections() {
+  'use strict'
+
+  if (!_navigationSections) {
   /*!
-  Given that indexing a list with negative indices result in `undefined` and no
-  item of a live list can be a falsy, we use this `for` pattern to get each link
-  element and overwrite its behavior when clicked.
+  With `Object.create()` we create a new object with its prototype set to the
+  passed object. Passing `null` the object has no prototype: it is the simplest
+  object possible.
   */
-  for (var l = _currentLinks.length - 1, a; a = _currentLinks[l]; l--) {
-    if (!a.dataset.hasOwnProperty('method')) {
-      a.addEventListener('click', doClientNavigation);
-    }
+    _navigationSections = Object.create(null);
+  }
+
+  var navigationSections =
+    document.querySelectorAll('[data-navigation-section]');
+
+  for (var section, i = 0, l = navigationSections.length; i < l; i++) {
+    section = navigationSections[i].dataset.navigationSection;
+    _navigationSections[section] = true;
   }
 }
 
@@ -176,7 +176,7 @@ function doClientNavigation(evt) {
 function hideAllSections() {
   'use strict'
 
-  window.NAVIGATION_SECTIONS.forEach(function (sectionName) {
+  Object.keys(_navigationSections).forEach(function (sectionName) {
      hideSection(sectionName);
   });
 }
@@ -209,6 +209,11 @@ function setSectionVisibility(sectionName, visibility) {
   }
 }
 
+/*!
+The function has split its responsibility in two: pattern matching and
+DOM changes. Here the pattern matching process is attended while DOM changes
+are in the next function.
+*/
 function navigateTo(href) {
   'use strict'
 
@@ -232,10 +237,34 @@ function navigateTo(href) {
     matching = path.match(pattern);
     if (matching) {
       var args = [parameters].concat(matching.slice(1));
-      return routes[pattern].apply(null, args);
+      var sectionPair = routes[pattern];
+      changeToSection(href, sectionPair[0], sectionPair[1], args);
+      return;
     }
   }
 }
+
+/*!
+The function hidesthe current section and shows the new one. Finally calls
+the `viewFunction` callback passing sections name, querystring parameters
+and captured groups as arguments.
+*/
+function changeToSection(href, sectionName, viewFunction, args) {
+  'use strict'
+
+  hideSection(_currentSection);
+  _currentSection = sectionName;
+  showSection(sectionName);
+
+  /*!
+  As our URL contains all the information for the view, it suffices to store
+  the href as the history state, setting the URL accordingly.
+  */
+  window.history.pushState(href, '', href);
+
+  viewFunction.apply(this, [sectionName].concat(args));
+}
+
 
 function parseGetParameters(href) {
   'use strict'
@@ -256,7 +285,7 @@ function parseGetParameters(href) {
       return parameterSpec.split('=');
     });
   /*!
-  Finally, we iterate trough the elements of the array putting them into a
+  Finally, we iterate through the elements of the array putting them into a
   dictionary.
   */
     parameters.forEach(function (parameter) {
