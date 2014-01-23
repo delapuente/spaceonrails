@@ -31,11 +31,11 @@ callback.
 in charge of populate the section and add the extra functionallity.
 */
 var ROUTES = {
-  '/$':                  ['post-list', fakeViewInitializer],
-  '/posts$':             ['post-list', fakeViewInitializer],
-  '/posts/(\\d+)$':      ['show-post', fakeViewInitializer],
-  '/posts/(\\d+)/edit$': ['edit-post', fakeViewInitializer],
-  '/posts/new$':         ['new-post', fakeViewInitializer]
+  '^/$':                    ['post-list', fakeViewInitializer],
+  '/posts/?$':             ['post-list', fakeViewInitializer],
+  '/posts/(\\d+)/?$':      ['show-post', fakeViewInitializer],
+  '/posts/(\\d+)/edit/?$': ['edit-post', fakeViewInitializer],
+  '/posts/new/?$':         ['new-post', fakeViewInitializer]
 };
 
 /*!
@@ -89,6 +89,16 @@ function startRouter() {
   else {
     document.addEventListener('DOMContentLoaded', installRouterAndNavigate);
   }
+
+  /*!
+  As our history state is the URL (a very Webby approach), to show the proper
+  view we should only _client-navigate_ to that URL.
+  */
+  window.onpopstate = function (event) {
+    if (event.state) {
+      navigateTo(event.state);
+    }
+  };
 
   /*!
   As you can see, functions can be nested inside functions. Here we use an
@@ -145,8 +155,8 @@ function autodiscoverSections() {
   var navigationSections =
     document.querySelectorAll('[data-navigation-section]');
 
-  for (var section, i = 0, l = navigationSections.length - 1; i < l; i++) {
-    section = _currentLinks[l].dataset.navigationSection;
+  for (var section, i = 0, l = navigationSections.length; i < l; i++) {
+    section = navigationSections[i].dataset.navigationSection;
     _navigationSections[section] = true;
   }
 }
@@ -228,7 +238,7 @@ function navigateTo(href) {
     if (matching) {
       var args = [parameters].concat(matching.slice(1));
       var sectionPair = routes[pattern];
-      changeToSection(sectionPair[0], sectionPair[1], args);
+      changeToSection(href, sectionPair[0], sectionPair[1], args);
       return;
     }
   }
@@ -239,12 +249,19 @@ The function hidesthe current section and shows the new one. Finally calls
 the `viewFunction` callback passing sections name, querystring parameters
 and captured groups as arguments.
 */
-function changeToSection(sectionName, viewFunction, args) {
+function changeToSection(href, sectionName, viewFunction, args) {
   'use strict'
 
   hideSection(_currentSection);
   _currentSection = sectionName;
   showSection(sectionName);
+
+  /*!
+  As our URL contains all the information for the view, it suffices to store
+  the href as the history state, setting the URL accordingly.
+  */
+  window.history.pushState(href, '', href);
+
   viewFunction.apply(this, [sectionName].concat(args));
 }
 
