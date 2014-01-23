@@ -38,37 +38,42 @@ Project stages
 
 The git project has X tags matching the different stages of the project:
 
- 0. `v0-plain` is the starting point. All the navigation is handled by the rails
- application and not even CSS has been applied yet.
-
- 1. `v1-css` is a little evolution over the starting point. Some advanced CSS
- has been applied but the navigation continues being synchronous and template
- driven via server `*.erb` files.
-
- 2. `v2.1-router` starts the web application providing the `webapp` folder
- as well as the skeleton for the router module (`webapp/js/router.js`).
-
- 3. `v2.2-template` continues with the web application by providing the
- skeleton for the template processor (`webapp/js/template.js`), a little
- software to manipulate the DOM.
-
- 4. `v2.3-webservice` introduces the final stage of the web application and
- provide the skeleton for the different controllers for each blog section
- (`webapp/js/controllers/`). Each controller will modify the model by
- using a REST API provided by the server in rails.
-
- 5. `v3-testsuite` adds the test suite required to validate our architecture.
-
- 6. `v4-done` implements the architecture and passes the test suite.
-
-**NOTE**: At this moment, only `v0-plain`, `v1-css` and `v2.1-router` are
-available.
-
-Changing from one to another is as simple as making check out of the tag. I.e.:
+### Stage 0: plain
 
 ```bash
-$ git checkout v1-css
+$ git checkout v0-plain
 ```
+
+The `v0-plain` tag is the starting point. All the navigation is handled by the
+rails application in the server and not even CSS has been applied yet.
+
+### Stage 0: css
+
+```bash
+$ git checkout v0-css
+```
+
+The `v0-css` shows a little evolution from the previous point. It shows how
+CSS3 can be used to improve the aspect of the application. Anyway, all the
+functionallity is still managed by the server application.
+
+### Stage 1: router
+
+```bash
+$ git checkout v1-router
+```
+
+```bash
+$ git checkout v1-router-end
+```
+
+The router is the main component to perform client navigation without loosing
+HTML5 semantics on the way. The two tags `v1-router` and `v1-router-end`
+provide the skeleton for the component and an anotated implementation
+respectively.
+
+Notes
+-----
 
 It is recommended to start a new branch while following the course so you can
 make:

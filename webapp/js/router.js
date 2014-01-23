@@ -44,7 +44,7 @@ var ROUTES = {
 
 /*!
 In the complete application, going to a section will trigger some initialization
-actions such as fetching data from sever and installing special handlers for
+actions such as fetching data from server and installing special handlers for
 specific actions. We are simulating this initialization now by simply printing
 the parameters in the console.
 */
