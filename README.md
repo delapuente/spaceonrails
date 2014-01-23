@@ -33,6 +33,21 @@ Start the server:
 $ rails server
 ```
 
+The goal of the course is to show the single-page application approach. This
+application is in the `webapp` folder and rely on the rails server running on
+`localhost:3000`. To run the static server for the webapp, enter the directory
+and install ruby dependencies:
+
+```bash
+$ bundle install
+```
+
+Now make:
+
+```bash
+$ rackup -p 8000
+```
+
 Project stages
 --------------
 
@@ -69,8 +84,30 @@ $ git checkout v1-router-end
 
 The router is the main component to perform client navigation without loosing
 HTML5 semantics on the way. The two tags `v1-router` and `v1-router-end`
-provide the skeleton for the component and an anotated implementation
+provide the skeleton for the component and an annotated implementation
 respectively.
+
+The latter can be found in `webapp/docs/routes.js.html`.
+
+### Stage 2: templates
+
+```bash
+$ git checkout v2-templates
+```
+
+```bash
+$ git checkout v2-templates-end
+```
+
+A template library is a piece of software able to produce HTML based on
+reference markup with placeholders and data. The tag `v1-templates` provides
+a Jasmine specification while the `v1-templates-end` includes a compliant
+implementation.
+
+Again, annotated source can can be found in `webapp/docs/templates.js.html`.
+
+With templates we add the Jasmine TDD library so we move towards a new stage
+in the application.
 
 Notes
 -----
