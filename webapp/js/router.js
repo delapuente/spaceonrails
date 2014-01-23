@@ -18,13 +18,29 @@ var NAVIGATION_SECTIONS = ['post-list', 'show-post', 'edit-post', 'new-post'];
 var ROUTES = {
   /*
   Define here your patterns by using regular expressions and your routing
-  actions by using functions in the form:
+  actions by using pairs of section name and initialization function:
 
-    'pattern1' : action,
-    'pattern2' : anotherAction,
+    'pattern1' : ['post-list', fakeViewInitializer],
+    'pattern2' : ['another-section', fakeViewInitializer],
     ...
   */
+  '/posts/(\\d+)$': ['show-post', fakeViewInitializer]
 };
+
+/*!
+In the complete application, going to a section will trigger some initialization
+actions such as fetching data from server and installing special handlers for
+specific actions. We are simulating this initialization now by simply printing
+the parameters in the console.
+*/
+function fakeViewInitializer(section, querystringParams) {
+  'use strict'
+
+  var capturedGroups = Array.prototype.slice.call(arguments, 2);
+  console.log('Section:', section);
+  console.log('Querystring parameters:', JSON.stringify(querystringParams));
+  console.log('Path parameters:', capturedGroups + '');
+}
 
 startRouter();
 
