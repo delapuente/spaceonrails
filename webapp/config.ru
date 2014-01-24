@@ -1,12 +1,8 @@
-require 'rack/rewrite'
-
-use Rack::Rewrite do
-  rewrite   %r{/posts\.*$},    '/index.html'
-end
-
 use Rack::Static,
-  :urls => ["/fonts", "/images", "/js", "/lib", "/specs", "/styles"],
-  :root => "."
+  :urls => [
+    "/fonts", "/images", "/js", "/lib", "/specs", "/styles",
+    "/test-runner.html"
+  ]
 
 run lambda { |env|
   [
