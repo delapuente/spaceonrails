@@ -92,22 +92,47 @@ The latter can be found in `webapp/docs/routes.js.html`.
 ### Stage 2: templates
 
 ```bash
-$ git checkout v2-templates
+$ git checkout v2-template
 ```
 
 ```bash
-$ git checkout v2-templates-end
+$ git checkout v2-template-end
 ```
 
 A template library is a piece of software able to produce HTML based on
-reference markup with placeholders and data. The tag `v1-templates` provides
-a Jasmine specification while the `v1-templates-end` includes a compliant
+reference markup with placeholders and data. The tag `v2-template` provides
+a Jasmine specification while the `v2-template-end` includes a compliant
 implementation.
+
+The file `webapp/js/views.js` is an example of real use.
 
 Again, annotated source can can be found in `webapp/docs/templates.js.html`.
 
 With templates we add the Jasmine TDD library so we move towards a new stage
 in the application.
+
+### Stage 3: model
+
+```bash
+$ git checkout v3-model
+```
+
+```bash
+$ git checkout v3-model-end
+```
+
+The model is the piece of software in charge of maintain the data of your
+application in a convenient way. The blog presents a RESTful API to manipulate
+the model but you still need a library in the client to abstract the server
+access into high level commands. In `v3-model` you have the Jasmine
+specification and in `v3-model-end` a compliant implementation.
+
+Views are evolved as well to integrate with the model and you can see the usage
+in `webapp/js/views.js`. One more time, the annotated source can can be found
+in `webapp/docs/model.js.html`.
+
+Now we are adding Sinon mockup and stub library and we enter the last stage of
+the application.
 
 Notes
 -----
