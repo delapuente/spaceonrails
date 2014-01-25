@@ -76,19 +76,50 @@ var templates;
         <div class="octowrap">
           <a class="octothorpe" href="#section-3">#</a>
         </div>
-      <p>This view controls the paginated list of posts in the server. It gets the number
-of page in the <code>parameters.page</code> entry.</p>
+      <p>Here there are some fake objects emulating a post list, a single post and
+some comments.</p>
       </td>
       <td class="code">
       <pre><code >
-<span class="function"><span class="keyword">function</span> <span class="title">postListView</span><span class="params">(section, parameters)</span> {</span>
-  <span class="string">'use strict'</span>
+<span class="comment">var</span> <span class="comment">FAKE_POST_LIST</span> <span class="comment">=</span> <span class="comment">{</span>
+  <span class="comment">"page":</span> <span class="comment">2</span>,
+  <span class="comment">"per_page":</span> <span class="comment">5</span>,
+  <span class="comment">"total_entries":</span> <span class="comment">15</span>,
+  <span class="comment">"entries":</span> <span class="title">[</span>
+    <span class="comment">{</span> <span class="comment">"id":</span>  <span class="comment">6</span>, <span class="comment">"title":</span> <span class="comment">"Sample</span> <span class="comment">post</span> <span class="comment">6"</span> <span class="comment">}</span>,
+    <span class="comment">{</span> <span class="comment">"id":</span>  <span class="comment">7</span>, <span class="comment">"title":</span> <span class="comment">"Sample</span> <span class="comment">post</span> <span class="comment">7"</span> <span class="comment">}</span>,
+    <span class="comment">{</span> <span class="comment">"id":</span>  <span class="comment">8</span>, <span class="comment">"title":</span> <span class="comment">"Sample</span> <span class="comment">post</span> <span class="comment">8"</span> <span class="comment">}</span>,
+    <span class="comment">{</span> <span class="comment">"id":</span>  <span class="comment">9</span>, <span class="comment">"title":</span> <span class="comment">"Sample</span> <span class="comment">post</span> <span class="comment">9"</span> <span class="comment">}</span>,
+    <span class="comment">{</span> <span class="comment">"id":</span> <span class="comment">10</span>, <span class="comment">"title":</span> <span class="comment">"Sample</span> <span class="comment">post</span> <span class="comment">10"</span> <span class="comment">}</span>
+  <span class="title">]</span>
+<span class="comment">};</span>
 
-  <span class="keyword">var</span> <span class="keyword">list</span>;
-  model.getPostList(parameters.page, <span class="function"><span class="keyword">function</span> <span class="params">(err, receivedList)</span> {</span>
-    <span class="keyword">list</span> = receivedList;
-
-  </code></pre>
+<span class="comment">var</span> <span class="comment">FAKE_POST</span> <span class="comment">=</span> <span class="comment">{</span>
+  <span class="comment">"id":</span> <span class="comment">1</span>,
+  <span class="comment">"title":</span> <span class="comment">"A</span> <span class="comment">sample</span> <span class="comment">post"</span>,
+  <span class="comment">"text":</span> <span class="comment">"</span>&lt;<span class="comment">p</span>&gt;<span class="comment">Lorem</span> <span class="comment">ipsum</span> <span class="comment">dolor</span> <span class="comment">sit</span> <span class="comment">amet</span>, <span class="comment">consectetur</span> <span class="comment">adipiscing</span> <span class="comment">elit</span>. <span class="comment">Ut</span> <span class="comment">"</span> <span class="literal">+</span>
+          <span class="comment">"risus</span> <span class="comment">leo</span>, <span class="comment">tristique</span> <span class="comment">vitae</span> <span class="comment">ultricies</span> <span class="comment">vel</span>, <span class="comment">eleifend</span> <span class="comment">fermentum</span> <span class="comment">au"</span> <span class="literal">+</span>
+          <span class="comment">"gue</span>. <span class="comment">Mauris</span> <span class="comment">a</span> <span class="comment">nunc</span> <span class="comment">aliquet</span> <span class="comment">neque</span> <span class="comment">laoreet</span> <span class="comment">bibendum</span> <span class="comment">eu</span> <span class="comment">mollis</span> <span class="comment">eni"</span> <span class="literal">+</span>
+          <span class="comment">"m</span>. <span class="comment">Vivamus</span> <span class="comment">semper</span> <span class="comment">tempus</span> <span class="comment">ante</span>, <span class="comment">vel</span> <span class="comment">suscipit</span> <span class="comment">orci</span>. <span class="comment">Proin</span> <span class="comment">non</span> <span class="comment">fel"</span> <span class="literal">+</span>
+          <span class="comment">"is</span> <span class="comment">in</span> <span class="comment">magna</span> <span class="comment">tempus</span> <span class="comment">commodo</span>. <span class="comment">Nullam</span> <span class="comment">condimentum</span> <span class="comment">tincidunt</span> <span class="comment">nulla</span> <span class="comment">"</span> <span class="literal">+</span>
+          <span class="comment">"elementum</span> <span class="comment">aliquam</span>. <span class="comment">Etiam</span> <span class="comment">ligula</span> <span class="comment">erat</span>, <span class="comment">ultrices</span> <span class="comment">vitae</span> <span class="comment">accumsan</span> <span class="comment">e"</span> <span class="literal">+</span>
+          <span class="comment">"get</span>, <span class="comment">tincidunt</span> <span class="comment">luctus</span> <span class="comment">felis</span>. <span class="comment">Sed</span> <span class="comment">eget</span> <span class="comment">augue</span> <span class="comment">convallis</span>, <span class="comment">laoreet</span> <span class="comment">"</span> <span class="literal">+</span>
+          <span class="comment">"eros</span> <span class="comment">vel</span>, <span class="comment">sodales</span> <span class="comment">ante</span>. <span class="comment">Sed</span> <span class="comment">vulputate</span> <span class="comment">adipiscing</span> <span class="comment">magna</span>, <span class="comment">et</span> <span class="comment">laci"</span> <span class="literal">+</span>
+          <span class="comment">"nia</span> <span class="comment">leo</span> <span class="comment">posuere</span> <span class="comment">in</span>. <span class="comment">In</span> <span class="comment">at</span> <span class="comment">justo</span> <span class="comment">urna</span>. <span class="comment">Vestibulum</span> <span class="comment">molestie</span>, <span class="comment">mi</span> <span class="comment">s"</span> <span class="literal">+</span>
+          <span class="comment">"ed</span> <span class="comment">volutpat</span> <span class="comment">pulvinar</span>, <span class="comment">libero</span> <span class="comment">dolor</span> <span class="comment">blandit</span> <span class="comment">est</span>, <span class="comment">non</span> <span class="comment">fringilla</span> <span class="comment">m"</span> <span class="literal">+</span>
+          <span class="comment">"etus</span> <span class="comment">lacus</span> <span class="comment">sed</span> <span class="comment">mi</span>. <span class="comment">Ut</span> <span class="comment">felis</span> <span class="comment">odio</span>, <span class="comment">blandit</span> <span class="comment">sed</span> <span class="comment">dolor</span> <span class="comment">id</span>, <span class="comment">tempus</span> <span class="comment">"</span> <span class="literal">+</span>
+          <span class="comment">"gravida</span> <span class="comment">ante</span>. <span class="comment">Pellentesque</span> <span class="comment">ultrices</span>, <span class="comment">massa</span> <span class="comment">id</span> <span class="comment">hendrerit</span> <span class="comment">placera"</span> <span class="literal">+</span>
+          <span class="comment">"t</span>, <span class="comment">urna</span> <span class="comment">orci</span> <span class="comment">aliquet</span> <span class="comment">nulla</span>, <span class="comment">nec</span> <span class="comment">consectetur</span> <span class="comment">odio</span> <span class="comment">sem</span> <span class="comment">vel</span> <span class="comment">justo</span>.<span class="comment">"</span> <span class="literal">+</span>
+          <span class="comment">"</span>&lt;<span class="comment">/p</span>&gt;&lt;<span class="comment">p</span>&gt;<span class="comment">Curabitur</span> <span class="comment">a</span> <span class="comment">ipsum</span> <span class="comment">lobortis</span>, <span class="comment">suscipit</span> <span class="comment">eros</span> <span class="comment">at</span>, <span class="comment">tempor</span> <span class="comment">sap"</span> <span class="literal">+</span>
+          <span class="comment">"ien</span>. <span class="comment">Cras</span> <span class="comment">sed</span> <span class="comment">semper</span> <span class="comment">eros</span>, <span class="comment">eu</span> <span class="comment">pellentesque</span> <span class="comment">justo</span>. <span class="comment">Donec</span> <span class="comment">venenat"</span> <span class="literal">+</span>
+          <span class="comment">"is</span> <span class="comment">nibh</span> <span class="comment">tellus</span>, <span class="comment">non</span> <span class="comment">rutrum</span> <span class="comment">lacus</span> <span class="comment">consequat</span> <span class="comment">eu</span>. <span class="comment">Curabitur</span> <span class="comment">non</span> <span class="comment">ar"</span> <span class="literal">+</span>
+          <span class="comment">"cu</span> <span class="comment">sit</span> <span class="comment">amet</span> <span class="comment">leo</span> <span class="comment">tempor</span> <span class="comment">suscipit</span> <span class="comment">vel</span> <span class="comment">vel</span> <span class="comment">purus</span>. <span class="comment">Cras</span> <span class="comment">pulvinar</span> <span class="comment">so"</span> <span class="literal">+</span>
+          <span class="comment">"dales</span> <span class="comment">justo</span>, <span class="comment">ac</span> <span class="comment">porttitor</span> <span class="comment">dolor</span> <span class="comment">consectetur</span> <span class="comment">sit</span> <span class="comment">amet</span>. <span class="comment">Ut</span> <span class="comment">auctor"</span> <span class="literal">+</span>
+          <span class="comment">"</span> <span class="comment">arcu</span> <span class="comment">sed</span> <span class="comment">imperdiet</span> <span class="comment">porta</span>. <span class="comment">Proin</span> <span class="comment">suscipit</span> <span class="comment">ante</span> <span class="comment">vel</span> <span class="comment">lacinia</span> <span class="comment">orna"</span> <span class="literal">+</span>
+          <span class="comment">"re</span>. <span class="comment">Integer</span> <span class="comment">mattis</span> <span class="comment">est</span> <span class="comment">et</span> <span class="comment">quam</span> <span class="comment">cursus</span>, <span class="comment">et</span> <span class="comment">commodo</span> <span class="comment">sapien</span> <span class="comment">ultric"</span> <span class="literal">+</span>
+          <span class="comment">"es</span>.&lt;<span class="comment">/p</span>&gt;<span class="comment">"</span>,
+  <span class="comment">"post_picture":</span> <span class="comment">"data:image/png;base64</span>,<span class="comment">iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYA"</span> <span class="literal">+</span>
+                <span class="comment">"AACNbyblAAAAHElEQVQI12P4</code></pre>
       </td>
     </tr>
     
@@ -98,14 +129,21 @@ of page in the <code>parameters.page</code> entry.</p>
         <div class="octowrap">
           <a class="octothorpe" href="#section-4">#</a>
         </div>
-      <p>Once the list of pages is received, the control is transferred to the several
-  helping functions to build the UI.</p>
+      <p>8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4O" +</p>
       </td>
       <td class="code">
-      <pre><code >
-    buildList()<span class="comment">;</span>
-    buildPagination()<span class="comment">;</span>
-  </code></pre>
+      <pre><code >                <span class="string">"HwAAAABJRU5ErkJggg=="</span>
+}<span class="comment">;</span>
+
+var FAKE_COMMENTS = [
+  { <span class="string">"id"</span>:<span class="number">1</span>,<span class="string">"commenter"</span>:<span class="string">"Huey"</span>,<span class="string">"body"</span>:<span class="string">"Huey says something."</span>,<span class="string">"post_id"</span>:<span class="number">1</span> },
+  { <span class="string">"id"</span>:<span class="number">2</span>,<span class="string">"commenter"</span>:<span class="string">"Dewey"</span>,<span class="string">"body"</span>:<span class="string">"Dewey says something."</span>,<span class="string">"post_id"</span>:<span class="number">1</span> },
+  { <span class="string">"id"</span>:<span class="number">3</span>,<span class="string">"commenter"</span>:<span class="string">"Louie"</span>,<span class="string">"body"</span>:<span class="string">"Louie says something."</span>,<span class="string">"post_id"</span>:<span class="number">1</span> },
+  { <span class="string">"id"</span>:<span class="number">4</span>,<span class="string">"commenter"</span>:<span class="string">"John"</span>,<span class="string">"body"</span>:<span class="string">"John says something."</span>,<span class="string">"post_id"</span>:<span class="number">1</span> },
+  { <span class="string">"id"</span>:<span class="number">5</span>,<span class="string">"commenter"</span>:<span class="string">"Jimmy"</span>,<span class="string">"body"</span>:<span class="string">"Jimmy says something."</span>,<span class="string">"post_id"</span>:<span class="number">1</span> },
+]<span class="comment">;</span>
+
+</code></pre>
       </td>
     </tr>
     
@@ -115,28 +153,29 @@ of page in the <code>parameters.page</code> entry.</p>
         <div class="octowrap">
           <a class="octothorpe" href="#section-5">#</a>
         </div>
-      <p>Now we update the navitation links to attach our customized navigation to
-  the new created links and finally we install the capability to delete
-  posts.</p>
+      <p>Views are self descriptives. We don't use any parameter yet but this will change
+once model.js is implemented.</p>
       </td>
       <td class="code">
       <pre><code >
-    updateNavigation();
-    addDeletions();
-  });
+<span class="function"><span class="keyword">function</span> <span class="title">postListView</span><span class="params">(section, parameters)</span> {</span>
+
+  buildList();
+  buildPagination();
+  updateNavigation();
 
   <span class="function"><span class="keyword">function</span> <span class="title">buildList</span><span class="params">()</span> {</span>
     var entryTemplate = templates<span class="matrix">[<span class="string">'post-list'</span>].</span>entry;
-    var entries = <span class="transposed_variable">entryTemplate.</span>render(<span class="transposed_variable">list.</span>entries);
+    var entries = <span class="transposed_variable">entryTemplate.</span>render(<span class="transposed_variable">FAKE_POST_LIST.</span>entries);
     var postList = <span class="transposed_variable">document.</span>querySelector(<span class="string">'#post-list ol.post-list'</span>);
     <span class="transposed_variable">postList.</span>innerHTML = <span class="string">''</span>;
     <span class="transposed_variable">postList.</span>appendChild(entries);
   }
 
   <span class="function"><span class="keyword">function</span> <span class="title">buildPagination</span><span class="params">()</span> {</span>
-    var currentPage = <span class="transposed_variable">list.</span>page;
-    var perPage = <span class="transposed_variable">list.</span>per_page;
-    var totalEntries = <span class="transposed_variable">list.</span>total_entries;
+    var currentPage = <span class="transposed_variable">FAKE_POST_LIST.</span>page;
+    var perPage = <span class="transposed_variable">FAKE_POST_LIST.</span>per_page;
+    var totalEntries = <span class="transposed_variable">FAKE_POST_LIST.</span>total_entries;
     var lastPage = <span class="transposed_variable">Math.</span><span class="built_in">ceil</span>(totalEntries / perPage);
 
     var previousTemplate = <span class="transposed_variable">templates.</span><span class="transposed_variable">pagination.</span>previous;
@@ -158,8 +197,9 @@ of page in the <code>parameters.page</code> entry.</p>
       paginationContainer.appendChild(nextTemplate.render(currentPage + <span class="number">1</span>));
     }</span>
   }
+}
 
-  </code></pre>
+</code></pre>
       </td>
     </tr>
     
@@ -169,334 +209,45 @@ of page in the <code>parameters.page</code> entry.</p>
         <div class="octowrap">
           <a class="octothorpe" href="#section-6">#</a>
         </div>
-      <p>Adding the delete capability consist in taking all the delete links and
-  attach a custom callback to intercept the navigation in the same way we
-  did to intercept navigation in the router.</p>
-      </td>
-      <td class="code">
-      <pre><code >
-  <span class="function"><span class="keyword">function</span> <span class="title">addDeletions</span><span class="params">()</span> {</span>
-    var deleteLinks =
-      <span class="transposed_variable">document.</span>querySelectorAll(<span class="string">'#post-list a[data-method="delete"]'</span>);
-    <span class="keyword">for</span> (var link, <span class="built_in">i</span> = <span class="transposed_variable">deleteLinks.</span><span class="built_in">length</span> - <span class="number">1</span>; link = deleteLinks<span class="matrix">[i]</span>; <span class="built_in">i</span>--) <span class="cell">{
-      link.addEventListener(<span class="string">'click'</span>, onDeletePost);
-    }</span>
-  }
-
-  </code></pre>
-      </td>
-    </tr>
-    
-    
-    <tr id="section-7">
-      <td class="docs">
-        <div class="octowrap">
-          <a class="octothorpe" href="#section-7">#</a>
-        </div>
-      <p>It's quite important to prevent the default action in order to avoid
-  browser navigation.</p>
-      </td>
-      <td class="code">
-      <pre><code >
-  <span class="function"><span class="keyword">function</span> <span class="title">onDeletePost</span><span class="params">(evt)</span> {</span>
-    <span class="transposed_variable">evt.</span>preventDefault();
-  </code></pre>
-      </td>
-    </tr>
-    
-    
-    <tr id="section-8">
-      <td class="docs">
-        <div class="octowrap">
-          <a class="octothorpe" href="#section-8">#</a>
-        </div>
-      <p>Methods such a <code>alert()</code> or <code>confirm()</code> are some of few examples of
-  synchronous JS functions. In the case of <code>confirm()</code>, the browser shows
-  a dialogue to the user with the text passed as parameter and two buttons
-  with <code>accept</code> and <code>cancel</code> values. If the user clicks <code>accept</code>, the function
-  evaluates to <code>true</code>.</p>
-      </td>
-      <td class="code">
-      <pre><code >
-    <span class="keyword">if</span> (!confirm('Are you sure you want <span class="keyword">to</span> delete this post?')) { <span class="constant">return</span>; }
-
-  </code></pre>
-      </td>
-    </tr>
-    
-    
-    <tr id="section-9">
-      <td class="docs">
-        <div class="octowrap">
-          <a class="octothorpe" href="#section-9">#</a>
-        </div>
-      <p>We extract the <code>postId</code> from the <code>href</code> attribute with a simple regular
-  expression.</p>
-      </td>
-      <td class="code">
-      <pre><code >
-    <span class="keyword">var</span> link = evt.target;
-    <span class="keyword">var</span> matching = link.getAttribute(<span class="string">'href'</span>).match(<span class="regexp">/\/posts\/(\d+)/</span>);
-    <span class="keyword">var</span> postId = matching ? matching[<span class="number">1</span>] : <span class="literal">undefined</span>;
-    <span class="keyword">if</span> (postId) {
-  </code></pre>
-      </td>
-    </tr>
-    
-    
-    <tr id="section-10">
-      <td class="docs">
-        <div class="octowrap">
-          <a class="octothorpe" href="#section-10">#</a>
-        </div>
-      <p>Finally, the view communicates with the model and issues a command to delete
-  the post and redirects the user to the page 1 using the router.</p>
-      </td>
-      <td class="code">
-      <pre><code >
-      <span class="transposed_variable">model.</span>deletePost(postId, <span class="function"><span class="keyword">function</span> <span class="title">onceDeleted</span><span class="params">(err)</span> {</span>
-        navigateTo(<span class="string">'/'</span>);
-      });
-    }
-  }
-}
-
-</code></pre>
-      </td>
-    </tr>
-    
-    
-    <tr id="section-11">
-      <td class="docs">
-        <div class="octowrap">
-          <a class="octothorpe" href="#section-11">#</a>
-        </div>
-      <p>The view shows an entire post and its comments.</p>
+      <p>Notice the repeated patterns along views and try to imagine how to reduce this
+repetition. You will refactor this code soon.</p>
       </td>
       <td class="code">
       <pre><code >
 <span class="function"><span class="keyword">function</span> <span class="title">showPostView</span><span class="params">(section, parameters, postId)</span> {</span>
+  buildTitle();
+  buildComments();
+  buildPost();
 
-  </code></pre>
-      </td>
-    </tr>
-    
-    
-    <tr id="section-12">
-      <td class="docs">
-        <div class="octowrap">
-          <a class="octothorpe" href="#section-12">#</a>
-        </div>
-      <p>These two operations are asynchronous. We ask for a post and for its comments
-  in two different and <a href="https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest#Notes"><em>parallel</em></a>
-  tasks and they could success at different times in any order.</p>
-      </td>
-      <td class="code">
-      <pre><code >
-  buildPostSections()<span class="comment">;</span>
-  buildCommentsSections()<span class="comment">;</span>
-
-  </code></pre>
-      </td>
-    </tr>
-    
-    
-    <tr id="section-13">
-      <td class="docs">
-        <div class="octowrap">
-          <a class="octothorpe" href="#section-13">#</a>
-        </div>
-      <p>Once we rendered all the post, we can set up the form for posting comments.</p>
-      </td>
-      <td class="code">
-      <pre><code >
-  <span class="function"><span class="keyword">function</span> <span class="title">buildPostSections</span><span class="params">()</span> {</span>
-    <span class="transposed_variable">model.</span>getPost(postId, <span class="function"><span class="keyword">function</span> <span class="params">(err, receivedPost)</span> {</span>
-      buildTitle(receivedPost);
-      buildPost(receivedPost);
-      setupPostComments();
-      updateNavigation();
-    });
-  }
-
-  </code></pre>
-      </td>
-    </tr>
-    
-    
-    <tr id="section-14">
-      <td class="docs">
-        <div class="octowrap">
-          <a class="octothorpe" href="#section-14">#</a>
-        </div>
-      <p>The comment section shows only the list of all comments and sets up the
-  <em>deleting a comment</em> functionality.</p>
-      </td>
-      <td class="code">
-      <pre><code >
-  <span class="function"><span class="keyword">function</span> <span class="title">buildCommentsSections</span><span class="params">()</span> {</span>
-    <span class="transposed_variable">model.</span>getComments(postId, <span class="function"><span class="keyword">function</span> <span class="params">(err, receivedComments)</span> {</span>
-      buildComments(receivedComments);
-      addCommentDeletions();
-    });
-  }
-
-  <span class="function"><span class="keyword">function</span> <span class="title">setupPostComments</span><span class="params">()</span> {</span>
-    var form = <span class="transposed_variable">document.</span>querySelector(<span class="string">'#add-comment form'</span>);
-  </code></pre>
-      </td>
-    </tr>
-    
-    
-    <tr id="section-15">
-      <td class="docs">
-        <div class="octowrap">
-          <a class="octothorpe" href="#section-15">#</a>
-        </div>
-      <p>We customize the action when the formulary is sent by preventing the real
-  navigation action and adding our custom request through the model.</p>
-      </td>
-      <td class="code">
-      <pre><code >
-    <span class="transposed_variable">form.</span>addEventListener(<span class="string">'submit'</span>, <span class="function"><span class="keyword">function</span> <span class="title">onSubmit</span><span class="params">(evt)</span> {</span>
-      <span class="transposed_variable">evt.</span>preventDefault();
-
-  </code></pre>
-      </td>
-    </tr>
-    
-    
-    <tr id="section-16">
-      <td class="docs">
-        <div class="octowrap">
-          <a class="octothorpe" href="#section-16">#</a>
-        </div>
-      <p>The heleper functon <code>gatherFormFields()</code> uses the special notation we
-  introduced in the view to build the automatically build the payload.</p>
-      </td>
-      <td class="code">
-      <pre><code >
-      var payload = gatherFormFields(form);
-      <span class="transposed_variable">model.</span>newComment(postId, payload, <span class="function"><span class="keyword">function</span> <span class="title">onceCreated</span><span class="params">(err)</span> {</span>
-        buildCommentsSections();
-      });
-    });
-  }
-
-  <span class="function"><span class="keyword">function</span> <span class="title">buildTitle</span><span class="params">(post)</span> {</span>
+  <span class="function"><span class="keyword">function</span> <span class="title">buildTitle</span><span class="params">()</span> {</span>
     var subtitleTemplate = templates<span class="matrix">[<span class="string">'show-post'</span>].</span>title;
     var subtitleContainer = <span class="transposed_variable">document.</span>querySelector(<span class="string">'header div'</span>);
     <span class="transposed_variable">subtitleContainer.</span>innerHTML = <span class="string">''</span>;
-    <span class="transposed_variable">subtitleContainer.</span>appendChild(<span class="transposed_variable">subtitleTemplate.</span>render(post));
+    <span class="transposed_variable">subtitleContainer.</span>appendChild(<span class="transposed_variable">subtitleTemplate.</span>render(FAKE_POST));
   }
 
-  <span class="function"><span class="keyword">function</span> <span class="title">buildPost</span><span class="params">(post)</span> {</span>
-    var postTemplate = templates<span class="matrix">[<span class="string">'show-post'</span>].</span>post;
-    var postContainer = <span class="transposed_variable">document.</span>querySelector(<span class="string">'#show-post div'</span>);
-    <span class="transposed_variable">postContainer.</span>innerHTML = <span class="string">''</span>;
-    <span class="transposed_variable">postContainer.</span>appendChild(<span class="transposed_variable">postTemplate.</span>render(post));
-  }
-
-  <span class="function"><span class="keyword">function</span> <span class="title">buildComments</span><span class="params">(comments)</span> {</span>
+  <span class="function"><span class="keyword">function</span> <span class="title">buildComments</span><span class="params">()</span> {</span>
     var commentTemplate = templates<span class="matrix">[<span class="string">'show-post'</span>].</span>comment;
     var commentContainer = <span class="transposed_variable">document.</span>querySelector(<span class="string">'aside div'</span>);
     <span class="transposed_variable">commentContainer.</span>innerHTML = <span class="string">''</span>;
-    <span class="transposed_variable">commentContainer.</span>appendChild(<span class="transposed_variable">commentTemplate.</span>render(comments));
+    <span class="transposed_variable">commentContainer.</span>appendChild(<span class="transposed_variable">commentTemplate.</span>render(FAKE_COMMENTS));
   }
 
-  </code></pre>
-      </td>
-    </tr>
-    
-    
-    <tr id="section-17">
-      <td class="docs">
-        <div class="octowrap">
-          <a class="octothorpe" href="#section-17">#</a>
-        </div>
-      <p>Very similar to delete a post.</p>
-      </td>
-      <td class="code">
-      <pre><code >
-  <span class="function"><span class="keyword">function</span> <span class="title">addCommentDeletions</span><span class="params">()</span> {</span>
-    <span class="keyword">var</span> deleteLinks =
-      document.querySelectorAll(<span class="string">'aside a[data-method="delete"]'</span>);
-    <span class="keyword">for</span> (<span class="keyword">var</span> link, i = deleteLinks.length - <span class="number">1</span>; link = deleteLinks[i]; i--) {
-      link.addEventListener(<span class="string">'click'</span>, onDeletePost);
-    }
-  }
-
-  <span class="function"><span class="keyword">function</span> <span class="title">onDeletePost</span><span class="params">(evt)</span> {</span>
-    evt.preventDefault();
-    <span class="keyword">if</span> (!confirm(<span class="string">'Are you sure you want to delete this comment?'</span>)) { <span class="keyword">return</span>; }
-
-    <span class="keyword">var</span> link = evt.target;
-    <span class="keyword">var</span> matching =
-      link.getAttribute(<span class="string">'href'</span>).match(<span class="regexp">/\/posts\/(\d+)\/comments\/(\d+)/</span>);
-    <span class="keyword">var</span> postId = matching ? matching[<span class="number">1</span>] : <span class="literal">undefined</span>;
-    <span class="keyword">var</span> commentId = matching ? matching[<span class="number">2</span>] : <span class="literal">undefined</span>;
-    <span class="keyword">if</span> (postId &amp;&amp; commentId) {
-      model.deleteComment(postId, commentId, <span class="function"><span class="keyword">function</span> <span class="title">onceDeleted</span><span class="params">(err)</span> {</span>
-  </code></pre>
-      </td>
-    </tr>
-    
-    
-    <tr id="section-18">
-      <td class="docs">
-        <div class="octowrap">
-          <a class="octothorpe" href="#section-18">#</a>
-        </div>
-      <p>This time, instead of navigating to some route we ask the view to rebuild
-  the comments' section in order to avoid asking for the post again.</p>
-      </td>
-      <td class="code">
-      <pre><code >
-        buildCommentsSections()<span class="comment">;</span>
-      })<span class="comment">;</span>
-    }
+  <span class="function"><span class="keyword">function</span> <span class="title">buildPost</span><span class="params">()</span> {</span>
+    var postTemplate = templates<span class="matrix">[<span class="string">'show-post'</span>].</span>post;
+    var postContainer = <span class="transposed_variable">document.</span>querySelector(<span class="string">'#show-post div'</span>);
+    <span class="transposed_variable">postContainer.</span>innerHTML = <span class="string">''</span>;
+    <span class="transposed_variable">postContainer.</span>appendChild(<span class="transposed_variable">postTemplate.</span>render(FAKE_POST));
+    updateNavigation();
   }
 }
 
-</code></pre>
-      </td>
-    </tr>
-    
-    
-    <tr id="section-19">
-      <td class="docs">
-        <div class="octowrap">
-          <a class="octothorpe" href="#section-19">#</a>
-        </div>
-      <p>This view and the next one are very similar. The main difference is the edit
-one performs a query to the model to get the post an fill the form fields
-while the new version does not perform any additional request.</p>
-      </td>
-      <td class="code">
-      <pre><code >
 <span class="function"><span class="keyword">function</span> <span class="title">editPostView</span><span class="params">(section, parameters, postId)</span> {</span>
-  <span class="transposed_variable">model.</span>getPost(postId, <span class="function"><span class="keyword">function</span> <span class="params">(err, receivedPost)</span> {</span>
-    var post = receivedPost;
-
-    var formTemplate = templates<span class="matrix">[<span class="string">'post-form'</span>]</span>;
-    var formContainer = <span class="transposed_variable">document.</span>querySelector(<span class="string">'#edit-post div'</span>);
-    <span class="transposed_variable">formContainer.</span>innerHTML = <span class="string">''</span>;
-    <span class="transposed_variable">formContainer.</span>appendChild(<span class="transposed_variable">formTemplate.</span>render(post));
-    setupUpdatePost();
-    updateNavigation();
-  });
-
-  <span class="function"><span class="keyword">function</span> <span class="title">setupUpdatePost</span><span class="params">()</span> {</span>
-    var form = <span class="transposed_variable">document.</span>querySelector(<span class="string">'#edit-post form'</span>);
-    <span class="transposed_variable">form.</span>addEventListener(<span class="string">'submit'</span>, <span class="function"><span class="keyword">function</span> <span class="params">(evt)</span> {</span>
-      <span class="transposed_variable">evt.</span>preventDefault();
-
-      var update = gatherFormFields(form);
-      <span class="transposed_variable">model.</span>updatePost(postId, update, <span class="function"><span class="keyword">function</span> <span class="title">onceUpdated</span><span class="params">(err)</span> {</span>
-        navigateTo(<span class="string">'/posts/'</span> + postId);
-      });
-    });
-  }
+  var formTemplate = templates<span class="matrix">[<span class="string">'post-form'</span>]</span>;
+  var formContainer = <span class="transposed_variable">document.</span>querySelector(<span class="string">'#edit-post div'</span>);
+  <span class="transposed_variable">formContainer.</span>innerHTML = <span class="string">''</span>;
+  <span class="transposed_variable">formContainer.</span>appendChild(<span class="transposed_variable">formTemplate.</span>render(FAKE_POST));
+  updateNavigation();
 }
 
 <span class="function"><span class="keyword">function</span> <span class="title">newPostView</span><span class="params">()</span> {</span>
@@ -505,61 +256,7 @@ while the new version does not perform any additional request.</p>
   var formContainer = <span class="transposed_variable">document.</span>querySelector(<span class="string">'#new-post div'</span>);
   <span class="transposed_variable">formContainer.</span>innerHTML = <span class="string">''</span>;
   <span class="transposed_variable">formContainer.</span>appendChild(<span class="transposed_variable">formTemplate.</span>render(emptyPost));
-
-  setupCreatePost();
-
-  <span class="function"><span class="keyword">function</span> <span class="title">setupCreatePost</span><span class="params">()</span> {</span>
-    var form = <span class="transposed_variable">document.</span>querySelector(<span class="string">'#new-post form'</span>);
-    <span class="transposed_variable">form.</span>addEventListener(<span class="string">'submit'</span>, <span class="function"><span class="keyword">function</span> <span class="params">(evt)</span> {</span>
-      <span class="transposed_variable">evt.</span>preventDefault();
-
-      var post = gatherFormFields(form);
-      <span class="transposed_variable">model.</span>newPost(post, <span class="function"><span class="keyword">function</span> <span class="title">onceCreated</span><span class="params">(err, newPost)</span> {</span>
-        navigateTo(<span class="string">'/posts/'</span> + <span class="transposed_variable">newPost.</span>id);
-      });
-    });
-  }
-}
-
-</code></pre>
-      </td>
-    </tr>
-    
-    
-    <tr id="section-20">
-      <td class="docs">
-        <div class="octowrap">
-          <a class="octothorpe" href="#section-20">#</a>
-        </div>
-      <p>The helper function gathers all the fields in the form and uses their names
-to build an object with the same structure. It uses the same function
-used for the templates to follow <em>dot notation</em> and to allow nested fields.</p>
-      </td>
-      <td class="code">
-      <pre><code >
-<span class="function"><span class="keyword">function</span> <span class="title">gatherFormFields</span><span class="params">(form)</span> {</span>
-  var result = <span class="cell">{}</span>;
-  var elements = <span class="transposed_variable">form.</span>querySelectorAll(<span class="string">'input, textarea'</span>);
-  <span class="keyword">for</span> (var <span class="built_in">i</span> = <span class="transposed_variable">elements.</span><span class="built_in">length</span> - <span class="number">1</span>, element; element = elements<span class="matrix">[i]</span>; <span class="built_in">i</span>--) <span class="cell">{
-    if (element.name &amp;&amp; element.type !== <span class="string">'submit'</span>) {
-      putIn(result, element.name, element.value);
-    }</span>
-  }
-
-  <span class="keyword">return</span> result;
-
-  <span class="function"><span class="keyword">function</span> <span class="title">putIn</span><span class="params">(target, path, object)</span> {</span>
-    var tokens = <span class="transposed_variable">path.</span>split(<span class="string">'.'</span>);
-    var current = tokens<span class="matrix">[<span class="number">0</span>]</span>;
-    var remainingPath = <span class="transposed_variable">tokens.</span>slice(<span class="number">1</span>).join(<span class="string">'.'</span>);
-    <span class="keyword">if</span> (<span class="transposed_variable">tokens.</span><span class="built_in">length</span> === <span class="number">1</span>) <span class="cell">{
-      target[current] = object;
-    }</span>
-    <span class="keyword">else</span> <span class="cell">{
-      target[current] = target[current] || {}</span>;
-      putIn(target<span class="matrix">[current]</span>, remainingPath, object);
-    }
-  }
+  updateNavigation();
 }
 </code></pre>
       </td>
