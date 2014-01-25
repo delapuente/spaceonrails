@@ -28,81 +28,43 @@ function gatherTemplates() {
 }
 
 /*!
-Here there are some fake objects emulating a post list, a single post and
-some comments.
-*/
-var FAKE_POST_LIST = {
-  "page": 2,
-  "per_page": 5,
-  "total_entries": 15,
-  "entries": [
-    { "id":  6, "title": "Sample post 6" },
-    { "id":  7, "title": "Sample post 7" },
-    { "id":  8, "title": "Sample post 8" },
-    { "id":  9, "title": "Sample post 9" },
-    { "id": 10, "title": "Sample post 10" }
-  ]
-};
-
-var FAKE_POST = {
-  "id": 1,
-  "title": "A sample post",
-  "text": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut " +
-          "risus leo, tristique vitae ultricies vel, eleifend fermentum au" +
-          "gue. Mauris a nunc aliquet neque laoreet bibendum eu mollis eni" +
-          "m. Vivamus semper tempus ante, vel suscipit orci. Proin non fel" +
-          "is in magna tempus commodo. Nullam condimentum tincidunt nulla " +
-          "elementum aliquam. Etiam ligula erat, ultrices vitae accumsan e" +
-          "get, tincidunt luctus felis. Sed eget augue convallis, laoreet " +
-          "eros vel, sodales ante. Sed vulputate adipiscing magna, et laci" +
-          "nia leo posuere in. In at justo urna. Vestibulum molestie, mi s" +
-          "ed volutpat pulvinar, libero dolor blandit est, non fringilla m" +
-          "etus lacus sed mi. Ut felis odio, blandit sed dolor id, tempus " +
-          "gravida ante. Pellentesque ultrices, massa id hendrerit placera" +
-          "t, urna orci aliquet nulla, nec consectetur odio sem vel justo." +
-          "</p><p>Curabitur a ipsum lobortis, suscipit eros at, tempor sap" +
-          "ien. Cras sed semper eros, eu pellentesque justo. Donec venenat" +
-          "is nibh tellus, non rutrum lacus consequat eu. Curabitur non ar" +
-          "cu sit amet leo tempor suscipit vel vel purus. Cras pulvinar so" +
-          "dales justo, ac porttitor dolor consectetur sit amet. Ut auctor" +
-          " arcu sed imperdiet porta. Proin suscipit ante vel lacinia orna" +
-          "re. Integer mattis est et quam cursus, et commodo sapien ultric" +
-          "es.</p>",
-  "post_picture": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYA" +
-                "AACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4O" +
-                "HwAAAABJRU5ErkJggg=="
-};
-
-var FAKE_COMMENTS = [
-  { "id":1,"commenter":"Huey","body":"Huey says something.","post_id":1 },
-  { "id":2,"commenter":"Dewey","body":"Dewey says something.","post_id":1 },
-  { "id":3,"commenter":"Louie","body":"Louie says something.","post_id":1 },
-  { "id":4,"commenter":"John","body":"John says something.","post_id":1 },
-  { "id":5,"commenter":"Jimmy","body":"Jimmy says something.","post_id":1 },
-];
-
-/*!
-Views are self descriptives. We don't use any parameter yet but this will change
-once model.js is implemented.
+This view controls the paginated list of posts in the server. It gets the number
+of page in the `parameters.page` entry.
 */
 function postListView(section, parameters) {
+  'use strict'
 
-  buildList();
-  buildPagination();
-  updateNavigation();
+  var list;
+  model.getPostList(parameters.page, function (err, receivedList) {
+    list = receivedList;
+
+  /*!
+  Once the list of pages is received, the control is transferred to the several
+  helping functions to build the UI.
+  */
+    buildList();
+    buildPagination();
+  /*!
+  Now we update the navitation links to attach our customized navigation to
+  the new created links and finally we install the capability to delete
+  posts.
+  */
+    updateNavigation();
+    addDeletions();
+  });
 
   function buildList() {
     var entryTemplate = templates['post-list'].entry;
-    var entries = entryTemplate.render(FAKE_POST_LIST.entries);
+    var entries = entryTemplate.render(list.entries);
     var postList = document.querySelector('#post-list ol.post-list');
     postList.innerHTML = '';
     postList.appendChild(entries);
   }
 
   function buildPagination() {
-    var currentPage = FAKE_POST_LIST.page;
-    var perPage = FAKE_POST_LIST.per_page;
-    var totalEntries = FAKE_POST_LIST.total_entries;
+    var currentPage = list.page;
+    var perPage = list.per_page;
+    var totalEntries = list.total_entries;
     var lastPage = Math.ceil(totalEntries / perPage);
 
     var previousTemplate = templates.pagination.previous;
@@ -124,46 +86,191 @@ function postListView(section, parameters) {
       paginationContainer.appendChild(nextTemplate.render(currentPage + 1));
     }
   }
+
+  /*!
+  Adding the delete capability consist in taking all the delete links and
+  attach a custom callback to intercept the navigation in the same way we
+  did to intercept navigation in the router.
+  */
+  function addDeletions() {
+    var deleteLinks =
+      document.querySelectorAll('#post-list a[data-method="delete"]');
+    for (var link, i = deleteLinks.length - 1; link = deleteLinks[i]; i--) {
+      link.addEventListener('click', onDeletePost);
+    }
+  }
+
+  /*!
+  It's quite important to prevent the default action in order to avoid
+  browser navigation.
+  */
+  function onDeletePost(evt) {
+    evt.preventDefault();
+  /*!
+  Methods such a `alert()` or `confirm()` are some of few examples of
+  synchronous JS functions. In the case of `confirm()`, the browser shows
+  a dialogue to the user with the text passed as parameter and two buttons
+  with `accept` and `cancel` values. If the user clicks `accept`, the function
+  evaluates to `true`.
+  */
+    if (!confirm('Are you sure you want to delete this post?')) { return; }
+
+  /*!
+  We extract the `postId` from the `href` attribute with a simple regular
+  expression.
+  */
+    var link = evt.target;
+    var matching = link.getAttribute('href').match(/\/posts\/(\d+)/);
+    var postId = matching ? matching[1] : undefined;
+    if (postId) {
+  /*!
+  Finally, the view communicates with the model and issues a command to delete
+  the post and redirects the user to the page 1 using the router.
+  */
+      model.deletePost(postId, function onceDeleted(err) {
+        navigateTo('/');
+      });
+    }
+  }
 }
 
 /*!
-Notice the repeated patterns along views and try to imagine how to reduce this
-repetition. You will refactor this code soon.
+The view shows an entire post and its comments.
 */
 function showPostView(section, parameters, postId) {
-  buildTitle();
-  buildComments();
-  buildPost();
 
-  function buildTitle() {
+  /*!
+  These two operations are asynchronous. We ask for a post and for its comments
+  in two different and [_parallel_](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest#Notes)
+  tasks and they could success at different times in any order.
+  */
+  buildPostSections();
+  buildCommentsSections();
+
+  /*!
+  Once we rendered all the post, we can set up the form for posting comments.
+  */
+  function buildPostSections() {
+    model.getPost(postId, function (err, receivedPost) {
+      buildTitle(receivedPost);
+      buildPost(receivedPost);
+      setupPostComments();
+      updateNavigation();
+    });
+  }
+
+  /*!
+  The comment section shows only the list of all comments and sets up the
+  _deleting a comment_ functionality.
+  */
+  function buildCommentsSections() {
+    model.getComments(postId, function (err, receivedComments) {
+      buildComments(receivedComments);
+      addCommentDeletions();
+    });
+  }
+
+  function setupPostComments() {
+    var form = document.querySelector('#add-comment form');
+  /*!
+  We customize the action when the formulary is sent by preventing the real
+  navigation action and adding our custom request through the model.
+  */
+    form.addEventListener('submit', function onSubmit(evt) {
+      evt.preventDefault();
+
+  /*!
+  The heleper functon `gatherFormFields()` uses the special notation we
+  introduced in the view to build the automatically build the payload.
+  */
+      var payload = gatherFormFields(form);
+      model.newComment(postId, payload, function onceCreated(err) {
+        buildCommentsSections();
+      });
+    });
+  }
+
+  function buildTitle(post) {
     var subtitleTemplate = templates['show-post'].title;
     var subtitleContainer = document.querySelector('header div');
     subtitleContainer.innerHTML = '';
-    subtitleContainer.appendChild(subtitleTemplate.render(FAKE_POST));
+    subtitleContainer.appendChild(subtitleTemplate.render(post));
   }
 
-  function buildComments() {
-    var commentTemplate = templates['show-post'].comment;
-    var commentContainer = document.querySelector('aside div');
-    commentContainer.innerHTML = '';
-    commentContainer.appendChild(commentTemplate.render(FAKE_COMMENTS));
-  }
-
-  function buildPost() {
+  function buildPost(post) {
     var postTemplate = templates['show-post'].post;
     var postContainer = document.querySelector('#show-post div');
     postContainer.innerHTML = '';
-    postContainer.appendChild(postTemplate.render(FAKE_POST));
-    updateNavigation();
+    postContainer.appendChild(postTemplate.render(post));
+  }
+
+  function buildComments(comments) {
+    var commentTemplate = templates['show-post'].comment;
+    var commentContainer = document.querySelector('aside div');
+    commentContainer.innerHTML = '';
+    commentContainer.appendChild(commentTemplate.render(comments));
+  }
+
+  /*!
+  Very similar to delete a post.
+  */
+  function addCommentDeletions() {
+    var deleteLinks =
+      document.querySelectorAll('aside a[data-method="delete"]');
+    for (var link, i = deleteLinks.length - 1; link = deleteLinks[i]; i--) {
+      link.addEventListener('click', onDeletePost);
+    }
+  }
+
+  function onDeletePost(evt) {
+    evt.preventDefault();
+    if (!confirm('Are you sure you want to delete this comment?')) { return; }
+
+    var link = evt.target;
+    var matching =
+      link.getAttribute('href').match(/\/posts\/(\d+)\/comments\/(\d+)/);
+    var postId = matching ? matching[1] : undefined;
+    var commentId = matching ? matching[2] : undefined;
+    if (postId && commentId) {
+      model.deleteComment(postId, commentId, function onceDeleted(err) {
+  /*!
+  This time, instead of navigating to some route we ask the view to rebuild
+  the comments' section in order to avoid asking for the post again.
+  */
+        buildCommentsSections();
+      });
+    }
   }
 }
 
+/*!
+This view and the next one are very similar. The main difference is the edit
+one performs a query to the model to get the post an fill the form fields
+while the new version does not perform any additional request.
+*/
 function editPostView(section, parameters, postId) {
-  var formTemplate = templates['post-form'];
-  var formContainer = document.querySelector('#edit-post div');
-  formContainer.innerHTML = '';
-  formContainer.appendChild(formTemplate.render(FAKE_POST));
-  updateNavigation();
+  model.getPost(postId, function (err, receivedPost) {
+    var post = receivedPost;
+
+    var formTemplate = templates['post-form'];
+    var formContainer = document.querySelector('#edit-post div');
+    formContainer.innerHTML = '';
+    formContainer.appendChild(formTemplate.render(post));
+    setupUpdatePost();
+    updateNavigation();
+  });
+
+  function setupUpdatePost() {
+    var form = document.querySelector('#edit-post form');
+    form.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+
+      var update = gatherFormFields(form);
+      model.updatePost(postId, update, function onceUpdated(err) {
+        navigateTo('/posts/' + postId);
+      });
+    });
+  }
 }
 
 function newPostView() {
@@ -172,5 +279,48 @@ function newPostView() {
   var formContainer = document.querySelector('#new-post div');
   formContainer.innerHTML = '';
   formContainer.appendChild(formTemplate.render(emptyPost));
-  updateNavigation();
+
+  setupCreatePost();
+
+  function setupCreatePost() {
+    var form = document.querySelector('#new-post form');
+    form.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+
+      var post = gatherFormFields(form);
+      model.newPost(post, function onceCreated(err, newPost) {
+        navigateTo('/posts/' + newPost.id);
+      });
+    });
+  }
+}
+
+/*!
+The helper function gathers all the fields in the form and uses their names
+to build an object with the same structure. It uses the same function
+used for the templates to follow _dot notation_ and to allow nested fields.
+*/
+function gatherFormFields(form) {
+  var result = {};
+  var elements = form.querySelectorAll('input, textarea');
+  for (var i = elements.length - 1, element; element = elements[i]; i--) {
+    if (element.name && element.type !== 'submit') {
+      putIn(result, element.name, element.value);
+    }
+  }
+
+  return result;
+
+  function putIn(target, path, object) {
+    var tokens = path.split('.');
+    var current = tokens[0];
+    var remainingPath = tokens.slice(1).join('.');
+    if (tokens.length === 1) {
+      target[current] = object;
+    }
+    else {
+      target[current] = target[current] || {};
+      putIn(target[current], remainingPath, object);
+    }
+  }
 }
