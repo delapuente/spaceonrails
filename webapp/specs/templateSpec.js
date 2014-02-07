@@ -17,7 +17,7 @@ describe('The template library', function () {
   describe('Template instances', function () {
 
     it('are built from an element took as reference', function () {
-      var reference = fakeDocument.children[0];
+      var reference = fakeDocument.body.children[0];
       var template = new Template(reference);
 
       expect(template.reference).not.toBe(reference);
@@ -30,7 +30,7 @@ describe('The template library', function () {
       it('accepts an object and return a document fragment with a copy of ' +
       'the reference replacing `{{ key }}` substrings with the object values ' +
       'for those keys.', function () {
-        var reference = fakeDocument.children[0];
+        var reference = fakeDocument.body.children[0];
         var template = new Template(reference);
         var object = { title: 'Test title', id: 1 };
         var rendered = template.render(object);
@@ -40,11 +40,21 @@ describe('The template library', function () {
           .toBe('<span><a href="/post/1">Test title</a></span>');
       });
 
+      it('removes the `data-template` custom attribute if present.',
+      function () {
+        var reference = document.createElement('span');
+        reference.setAttribute('data-template', '');
+        var template = new Template(reference);
+        var rendered = template.render({});
+        expect(getHTML(rendered)).toBe('<span></span>');
+      });
+
+
       it('accepts an array of objects and return a document fragment with ' +
       'many copies of the reference as array items, each of them filled with' +
       'the corresponding object.', function () {
 
-        var reference = fakeDocument.children[0];
+        var reference = fakeDocument.body.children[0];
         var template = new Template(reference);
         var objects = [
           { title: 'Test title', id: 1 },
@@ -59,15 +69,6 @@ describe('The template library', function () {
           .toBe('<span><a href="/post/1">Test title</a></span>');
         expect(getHTML(rendered.children[1]))
           .toBe('<span><a href="/post/2">Test title 2</a></span>');
-      });
-
-      it('removes the `data-template` custom attribute if present.',
-      function () {
-        var reference = document.createElement('span');
-        reference.setAttribute('data-template', '');
-        var template = new Template(reference);
-        var rendered = template.render({});
-        expect(getHTML(rendered)).toBe('<span></span>');
       });
 
       it('accepts the syntax {{}} to replace by the object itself.',
